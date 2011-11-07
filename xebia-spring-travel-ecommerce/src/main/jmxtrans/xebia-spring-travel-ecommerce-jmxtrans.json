@@ -1,0 +1,36 @@
+{
+  "servers" : [ {
+    "port" : "6969",
+    "host" : "localhost",
+    "alias" : "travel-ecommerce-1",
+    "queries" : [
+    {
+        "outputWriters" : [
+          {
+              "@class" : "com.googlecode.jmxtrans.model.output.GraphiteWriter",
+              "settings" : {
+                  "port" : 2003,
+                  "host" : "localhost"
+                }
+            }],
+    	"obj": "travel-ecommerce:name=CreditCardServiceMonitoringImpl,type=CreditCardService,host=localhost,path=/xebia-spring-travel-ecommerce",
+    	"resultAlias" : "CreditCardService",
+    	"attr":["PurchaseInvocationCount", "ActiveInvocationCount", "PurchaseInvocationDurationInNanos", "PurchaseTotalRevenueInUsd", "SlowRequestCount", "InvalidCardExceptionCount", "LostOrStolenCardExceptionCount", "MissingOrInvalidDataExceptionCount", "PaymentProcessingExceptionCount", "ThreeDSecureVerificationExceptionCount"]
+    },
+    {
+        "outputWriters" : [
+          {
+              "@class" : "com.googlecode.jmxtrans.model.output.GraphiteWriter",
+              "settings" : {
+                  "port" : 2003,
+                  "host" : "localhost"
+                }
+            }],
+    	"obj": "travel-ecommerce:name=bookingAction,type=BookingAction,host=localhost,path=/xebia-spring-travel-ecommerce",
+    	"resultAlias" : "BookingAction",
+    	"attr":["BookingCount", "BookedNightCount", "TotalDurationInNanos"]
+    }
+    ],
+    "numQueryThreads" : 2
+  } ]
+}

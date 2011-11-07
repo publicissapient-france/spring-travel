@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ws.xebia.fr/travel/antifraud/v1_0"
+   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="antiFraudService"
+   targetNamespace="http://ws.xebia.fr/travel/antifraud/v1_0">
+   <wsdl:types>
+      <xsd:schema targetNamespace="http://ws.xebia.fr/travel/antifraud/v1_0" elementFormDefault="qualified">
+         <xsd:complexType name="CreditCard">
+            <xsd:all>
+               <xsd:element name="number" type="xsd:string" minOccurs="1" maxOccurs="1" />
+               <xsd:element name="holderName" type="xsd:string" minOccurs="1" maxOccurs="1" />
+               <xsd:element name="expirationMonth" minOccurs="1" maxOccurs="1">
+                  <xsd:simpleType>
+                     <xsd:restriction base="xsd:int">
+                        <xsd:minInclusive value="1" />
+                        <xsd:maxInclusive value="12" />
+                     </xsd:restriction>
+                  </xsd:simpleType>
+               </xsd:element>
+               <xsd:element name="expirationYear" type="xsd:int" minOccurs="1" maxOccurs="1" />
+               <xsd:element name="type" type="tns:CreditCardType" minOccurs="1" maxOccurs="1" />
+            </xsd:all>
+         </xsd:complexType>
+
+         <xsd:simpleType name="CreditCardType">
+            <xsd:restriction base="xsd:string">
+               <xsd:enumeration value="VISA" />
+               <xsd:enumeration value="MASTER_CARD" />
+               <xsd:enumeration value="AMERICAN_EXPRESS" />
+               <xsd:enumeration value="DISCOVER" />
+               <xsd:enumeration value="DINERS_CLUB" />
+               <xsd:enumeration value="CARTE_BLANCHE" />
+               <xsd:enumeration value="JCB" />
+            </xsd:restriction>
+         </xsd:simpleType>
+
+         <xsd:complexType name="Booking">
+            <xsd:all>
+               <xsd:element name="creditCard" type="tns:CreditCard" minOccurs="1" maxOccurs="1" />
+               <xsd:element name="beds" type="xsd:int" minOccurs="1" maxOccurs="1" />
+               <xsd:element name="hotel" type="xsd:string" />
+            </xsd:all>
+         </xsd:complexType>
+
+         <xsd:element name="CheckBooking">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="booking" type="tns:Booking" />
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+         <xsd:element name="CheckBookingResponse">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="out" type="xsd:string" />
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+         <xsd:element name="SuspiciousBookingFault">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="message" type="xsd:string" />
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+      </xsd:schema>
+   </wsdl:types>
+
+   <wsdl:message name="CheckBookingRequest">
+      <wsdl:part name="parameters" element="tns:CheckBooking" />
+   </wsdl:message>
+   <wsdl:message name="CheckBookingResponse">
+      <wsdl:part name="parameters" element="tns:CheckBookingResponse" />
+   </wsdl:message>
+   <wsdl:message name="SuspiciousBookingException">
+      <wsdl:part name="SuspiciousBookingException" element="tns:SuspiciousBookingFault"/>
+   </wsdl:message>
+   <wsdl:portType name="antiFraudService">
+
+      <wsdl:operation name="CheckBooking">
+         <wsdl:input message="tns:CheckBookingRequest" />
+         <wsdl:output message="tns:CheckBookingResponse" />
+         <wsdl:fault name="SuspiciousBookingException" message="tns:SuspiciousBookingException"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="antiFraudServiceSOAP" type="tns:antiFraudService">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+      <wsdl:operation name="CheckBooking">
+         <soap:operation soapAction="http://ws.xebia.fr/travel/antifraud/v1_0/CheckBooking" />
+         <wsdl:input>
+            <soap:body use="literal" />
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal" />
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="antiFraudService">
+      <wsdl:port binding="tns:antiFraudServiceSOAP" name="antiFraudServiceSOAP">
+         <soap:address location="http://www.example.org/" />
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

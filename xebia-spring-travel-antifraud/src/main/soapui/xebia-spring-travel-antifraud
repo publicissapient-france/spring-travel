@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://ws.xebia.fr/travel/antifraud/v1_0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:CheckBooking>
+         <v1:booking>
+            <v1:creditCard>
+               <v1:number>12345677890</v1:number>
+               <v1:holderName>Cyrille Le Clerc</v1:holderName>
+               <v1:expirationMonth>12</v1:expirationMonth>
+               <v1:expirationYear>2011</v1:expirationYear>
+               <v1:type>VISA</v1:type>
+            </v1:creditCard>
+            <v1:beds>3</v1:beds>
+            <v1:hotel>Concorde Lafayette</v1:hotel>
+         </v1:booking>
+      </v1:CheckBooking>
+   </soapenv:Body>
+</soapenv:Envelope>

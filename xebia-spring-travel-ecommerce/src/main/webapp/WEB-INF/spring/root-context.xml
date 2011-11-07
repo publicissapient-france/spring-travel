@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.xebia.fr/schema/xebia-management-extras http://www.xebia.fr/schema/management/xebia-management-extras.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+   <!-- Scans for application @Components to deploy -->
+   <context:component-scan base-package="org.springframework.webflow.samples.booking" />
+
+   <!-- Imports the configurations of the different infrastructure systems of the application -->
+   <import resource="mvc.xml" />
+   <import resource="webflow.xml" />
+   <import resource="db.xml" />
+   <import resource="security.xml" />
+   <import resource="antifraud.xml" />
+
+   <!-- Load properties required for initialization Spring beans. See @Value fields in PaymentConfiguration. -->
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+      <property name="location" value="classpath:application.properties" />
+      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+   </bean>
+
+   <!-- @Configuration classes contributing Spring beans. -->
+   <bean class="org.springframework.webflow.samples.booking.PaymentConfiguration" />
+
+   <management:servlet-context-aware-mbean-server id="mbeanServer" />
+   <management:profile-aspect server="mbeanServer" jmxDomain="travel-ecommerce" />
+   <management:application-version-mbean jmxDomain="travel-ecommerce" />
+   <context:mbean-export server="mbeanServer" />
+</beans>

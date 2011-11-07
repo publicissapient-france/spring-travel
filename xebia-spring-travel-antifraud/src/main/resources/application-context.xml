@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+   xmlns:context="http://www.springframework.org/schema/context" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
+   xmlns:amq="http://activemq.apache.org/schema/core"
+   xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://www.xebia.fr/schema/xebia-management-extras http://www.xebia.fr/schema/management/xebia-management-extras.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
+        ">
+
+   <!-- JMX -->
+   <management:servlet-context-aware-mbean-server id="mbeanServer" />
+   <context:mbean-export server="mbeanServer" />
+
+   <aop:aspectj-autoproxy proxy-target-class="true" />
+   <context:annotation-config />
+
+   <management:profile-aspect server="mbeanServer" jmxDomain="travel-antifraud"/>
+   <management:application-version-mbean jmxDomain="travel-antifraud"/>
+
+   <!-- CXF -->
+   <import resource="classpath:META-INF/cxf/cxf.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-extension-jaxws.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+   <bean id="cxf" class="org.apache.cxf.bus.CXFBusImpl">
+      <property name="id" value="xebia-spring-travel-antifraud-cxf-bus" />
+   </bean>
+   <bean id="org.apache.cxf.management.InstrumentationManager" class="org.apache.cxf.management.jmx.InstrumentationManagerImpl">
+      <property name="server" ref="mbeanServer" />
+      <property name="enabled" value="true" />
+      <property name="createMBServerConnectorFactory" value="false" />
+   </bean>
+   <bean id="CounterRepository" class="org.apache.cxf.management.counters.CounterRepository">
+      <property name="bus" ref="cxf" />
+   </bean>
+
+   <bean id="antiFraudServiceImpl" class="fr.xebia.ws.travel.antifraud.v1_0.AntiFraudServiceImpl" />
+   <jaxws:endpoint id="antiFraudService" implementor="#antiFraudServiceImpl" address="/1.0/antiFraudService" endpointName="se:antiFraudServiceSOAP"
+      serviceName="se:antiFraudService" xmlns:se="http://www.xebia.fr/xebia-spring-travel-antifraud/webservice">
+      <jaxws:features>
+         <bean class="org.apache.cxf.feature.LoggingFeature" />
+         <bean class="org.apache.cxf.management.interceptor.ResponseTimeFeature" />
+      </jaxws:features>
+      <jaxws:properties>
+         <entry key="faultStackTraceEnabled" value="true" />
+      </jaxws:properties>
+   </jaxws:endpoint>
+
+   <!-- JMS -->
+   <amq:broker useJmx="true" persistent="false">
+      <amq:transportConnectors>
+         <amq:transportConnector uri="tcp://localhost:61616" />
+         <amq:transportConnector uri="vm://localhost" />
+      </amq:transportConnectors>
+   </amq:broker>
+   <amq:connectionFactory id="activemqConnectionFactory" brokerURL="vm://localhost" />
+   <management:jms-connection-factory-wrapper id="connectionFactory" connection-factory="activemqConnectionFactory"/>
+
+</beans>

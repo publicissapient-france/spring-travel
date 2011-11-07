@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="xebia-spring-travel-antifraud" resourceRoot="" soapui-version="3.6" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="antiFraudServiceSoapBinding" type="wsdl" bindingName="{http://www.xebia.fr/xebia-spring-travel-antifraud/webservice}antiFraudServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService?wsdl"><con:part><con:url>http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="antiFraudService" targetNamespace="http://www.xebia.fr/xebia-spring-travel-antifraud/webservice" xmlns:ns1="http://ws.xebia.fr/travel/antifraud/v1_0" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.xebia.fr/xebia-spring-travel-antifraud/webservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:import location="http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService?wsdl=antiFraudService.wsdl" namespace="http://ws.xebia.fr/travel/antifraud/v1_0"></wsdl:import>
+  <wsdl:binding name="antiFraudServiceSoapBinding" type="ns1:antiFraudService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CheckBooking">
+      <soap:operation soapAction="http://ws.xebia.fr/travel/antifraud/v1_0/CheckBooking" style="document"/>
+      <wsdl:input name="CheckBooking">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CheckBookingResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SuspiciousBookingException">
+        <soap:fault name="SuspiciousBookingException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="antiFraudService">
+    <wsdl:port binding="tns:antiFraudServiceSoapBinding" name="antiFraudServiceSOAP">
+      <soap:address location="http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService?wsdl=antiFraudService.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="antiFraudService" targetNamespace="http://ws.xebia.fr/travel/antifraud/v1_0" xmlns:ns1="http://ws.xebia.fr/travel/antifraud/v1_0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://ws.xebia.fr/travel/antifraud/v1_0" version="1.0" xmlns:tns="http://ws.xebia.fr/travel/antifraud/v1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="CheckBooking">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="booking" type="tns:Booking"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CheckBookingResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="out" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SuspiciousBookingFault">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="message" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="Booking">
+        <xs:all>
+          <xs:element name="creditCard" type="tns:CreditCard"/>
+          <xs:element name="beds" type="xs:int"/>
+          <xs:element name="hotel" type="xs:string"/>
+        </xs:all>
+      </xs:complexType>
+      <xs:complexType name="CreditCard">
+        <xs:all>
+          <xs:element name="number" type="xs:string"/>
+          <xs:element name="holderName" type="xs:string"/>
+          <xs:element name="expirationMonth" type="xs:int"/>
+          <xs:element name="expirationYear" type="xs:int"/>
+          <xs:element name="type" type="tns:CreditCardType"/>
+        </xs:all>
+      </xs:complexType>
+      <xs:simpleType name="CreditCardType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="VISA"/>
+          <xs:enumeration value="MASTER_CARD"/>
+          <xs:enumeration value="AMERICAN_EXPRESS"/>
+          <xs:enumeration value="DISCOVER"/>
+          <xs:enumeration value="DINERS_CLUB"/>
+          <xs:enumeration value="CARTE_BLANCHE"/>
+          <xs:enumeration value="JCB"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="CheckBookingResponse">
+    <wsdl:part element="ns1:CheckBookingResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CheckBooking">
+    <wsdl:part element="ns1:CheckBooking" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SuspiciousBookingException">
+    <wsdl:part element="ns1:SuspiciousBookingFault" name="SuspiciousBookingException"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="antiFraudService">
+    <wsdl:operation name="CheckBooking">
+      <wsdl:input message="ns1:CheckBooking" name="CheckBooking"></wsdl:input>
+      <wsdl:output message="ns1:CheckBookingResponse" name="CheckBookingResponse"></wsdl:output>
+      <wsdl:fault message="ns1:SuspiciousBookingException" name="SuspiciousBookingException"></wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://ws.xebia.fr/travel/antifraud/v1_0/CheckBooking" name="CheckBooking" bindingOperationName="CheckBooking" type="Request-Response" outputName="CheckBookingResponse" inputName="CheckBooking" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Cyrille Le Clerc @ Hotel Concorde Lafayette"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://xebia-spring-travel-antifraud-1814635035.eu-west-1.elb.amazonaws.com/xebia-spring-travel-antifraud-1.0.0-SNAPSHOT/services/1.0/antiFraudService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://ws.xebia.fr/travel/antifraud/v1_0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:CheckBooking>
+         <v1:booking>
+            <v1:creditCard>
+               <v1:number>12345677890</v1:number>
+               <v1:holderName>Cyrille Le Clerc</v1:holderName>
+               <v1:expirationMonth>12</v1:expirationMonth>
+               <v1:expirationYear>2011</v1:expirationYear>
+               <v1:type>VISA</v1:type>
+            </v1:creditCard>
+            <v1:beds>3</v1:beds>
+            <v1:hotel>Concorde Lafayette</v1:hotel>
+         </v1:booking>
+      </v1:CheckBooking>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://ws.xebia.fr/travel/antifraud/v1_0/CheckBooking"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>

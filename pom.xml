@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>fr.xebia.demo.travel</groupId>
+   <artifactId>xebia-spring-travel</artifactId>
+   <name>xebia-spring-travel</name>
+   <version>1.0.1-SNAPSHOT</version>
+   <packaging>pom</packaging>
+
+   <properties>
+      <org.springframework-version>3.0.5.RELEASE</org.springframework-version>
+      <org.springframework.security-version>3.0.5.RELEASE</org.springframework.security-version>
+      <org.springframework.payment-version>0.5.0.20110326</org.springframework.payment-version>
+      <org.springframework.ws-version>2.0.1.RELEASE</org.springframework.ws-version>
+      <cxf.version>2.3.3</cxf.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <tomcat.maven.version>2.0-SNAPSHOT</tomcat.maven.version>
+   </properties>
+   <prerequisites>
+      <maven>3.0.0</maven>
+   </prerequisites>
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>fr.xebia.demo.travel</groupId>
+            <artifactId>xebia-spring-travel-common</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <!-- Spring -->
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${org.springframework-version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework.payment</groupId>
+            <artifactId>spring-payment-core</artifactId>
+            <version>${org.springframework.payment-version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${org.springframework.security-version}</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-web</artifactId>
+               </exclusion>
+            </exclusions>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${org.springframework.security-version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <version>2.3.0.RELEASE</version>
+            <exclusions>
+               <exclusion>
+                  <!-- prefer jcl-over-slf4j -->
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+               </exclusion>
+            </exclusions>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${org.springframework-version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${org.springframework-version}</version>
+         </dependency>
+         <dependency>
+            <!-- spring payment 0.5 snapshot pulls org.springframework:spring-context:jar:3.0.5.BUILD-SNAPSHOT -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework-version}</version>
+         </dependency>
+
+         <dependency>
+            <!-- used by spring -->
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.6.8</version>
+         </dependency>
+         <dependency>
+            <!-- used by spring -->
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.8</version>
+         </dependency>
+         <dependency>
+            <!-- used by spring -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+         </dependency>
+
+         <!-- CXF -->
+         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-core</artifactId>
+            <version>${cxf.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-management</artifactId>
+            <version>${cxf.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>fr.xebia.management</groupId>
+            <artifactId>xebia-management-extras</artifactId>
+            <version>1.1.3</version>
+         </dependency>
+         <!-- Hibernate JPA 2 Provider -->
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.6-Final</version>
+         </dependency>
+         <!-- Database -->
+         <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.0.0</version>
+         </dependency>
+         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.15</version>
+         </dependency>
+         <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+         </dependency>
+         <!-- Servlet, JSTL, Tiles -->
+         <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
+         </dependency>
+         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+         </dependency>
+         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+            <version>2.2.2</version>
+         </dependency>
+         <!-- JSR 303 with Hibernate Validator -->
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.1.0.Final</version>
+         </dependency>
+         <!-- Joda Time -->
+         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>1.6.2</version>
+         </dependency>
+
+         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r09</version>
+         </dependency>
+         <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.3.1</version>
+         </dependency>
+
+         <!-- Logging -->
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+         </dependency>
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.6.1</version>
+         </dependency>
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>1.6.1</version>
+         </dependency>
+         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.28</version>
+         </dependency>
+         <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>2.5.16</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>5.5.0</version>
+         </dependency>
+         <dependency>
+            <!-- for activemq -->
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>3.7</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
+         </dependency>
+
+         <!-- Test -->
+         <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>3.0</version>
+         </dependency>
+
+         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.2.5</version>
+         </dependency>
+         <!-- Groovy -->
+         <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.8.0</version>
+         </dependency>
+         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
+
+   <repositories>
+      <!-- For Hibernate Validator -->
+      <repository>
+         <id>org.jboss.repository</id>
+         <name>JBoss Maven Repository</name>
+         <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+         </releases>
+         <snapshots>
+            <enabled>false</enabled>
+         </snapshots>
+      </repository>
+      <repository>
+         <!-- for spring-payment and appdynamics:agent-api -->
+         <id>xebia-france.googlecode.com</id>
+         <url>http://xebia-france.googlecode.com/svn/repository/maven2/</url>
+      </repository>
+   </repositories>
+   <pluginRepositories>
+      <pluginRepository>
+         <id>fusesource-snapshots</id>
+         <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots/</url>
+         <releases>
+            <enabled>false</enabled>
+         </releases>
+      </pluginRepository>
+   </pluginRepositories>
+   <modules>
+      <module>xebia-spring-travel-common</module>
+      <module>xebia-spring-travel-antifraud</module>
+      <module>xebia-spring-travel-ecommerce</module>
+   </modules>
+
+   <build>
+      <pluginManagement>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-war-plugin</artifactId>
+               <version>2.1</version>
+            </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-compiler-plugin</artifactId>
+               <version>2.3.1</version>
+            </plugin>
+            <plugin>
+               <groupId>org.fusesource.mvnplugins</groupId>
+               <artifactId>maven-provision-plugin</artifactId>
+               <version>1.14-SNAPSHOT</version>
+            </plugin>
+            <plugin>
+               <groupId>org.apache.cxf</groupId>
+               <artifactId>cxf-codegen-plugin</artifactId>
+               <version>${cxf.version}</version>
+            </plugin>
+            <plugin>
+              <groupId>org.mortbay.jetty</groupId>
+              <artifactId>jetty-maven-plugin</artifactId>
+               <version>8.0.0.M2</version>
+            </plugin>
+         </plugins>
+      </pluginManagement>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.fusesource.mvnplugins</groupId>
+            <artifactId>maven-provision-plugin</artifactId>
+            <configuration>
+               <outputDirectory>/opt/apache-tomcat-7/webapps/</outputDirectory>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+   <scm>
+      <connection>scm:svn:http://xebia-france.googlecode.com/svn/training/xebia-spring-travel/trunk</connection>
+      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/training/xebia-spring-travel/trunk</developerConnection>
+   </scm>
+</project>

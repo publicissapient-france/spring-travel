@@ -1,0 +1,53 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+   xmlns:security="http://cxf.apache.org/configuration/security" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+   xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
+   xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+		http://www.xebia.fr/schema/xebia-management-extras http://www.xebia.fr/schema/management/xebia-management-extras.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+
+
+   <bean id="AntiFraudService" class="fr.xebia.ws.travel.antifraud.v1_0.AntiFraudServiceDispatchingImpl">
+      <property name="antiFraudService" ref="antiFraudServiceWsImpl" />
+      <property name="enableAntiFraudService" value="${antifraudservice.enable}" />
+   </bean>
+
+
+
+
+
+   <!-- CXF -->
+   <import resource="classpath:META-INF/cxf/cxf.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-extension-jaxws.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+   <bean id="cxf" class="org.apache.cxf.bus.CXFBusImpl">
+      <property name="id" value="xebia-spring-travel-ecommerce-cxf-bus" />
+   </bean>
+   <bean id="org.apache.cxf.management.InstrumentationManager" class="org.apache.cxf.management.jmx.InstrumentationManagerImpl">
+      <property name="server" ref="mbeanServer" />
+      <property name="enabled" value="true" />
+      <property name="createMBServerConnectorFactory" value="false" />
+   </bean>
+   <bean id="CounterRepository" class="org.apache.cxf.management.counters.CounterRepository">
+      <property name="bus" ref="cxf" />
+   </bean>
+
+   <jaxws:client id="antiFraudServiceWsImpl" serviceClass="fr.xebia.ws.travel.antifraud.v1_0.AntiFraudService" address="${antifraudservice.baseurl}/services/1.0/antiFraudService">
+      <jaxws:features>
+         <bean class="org.apache.cxf.feature.LoggingFeature" />
+      </jaxws:features>
+   </jaxws:client>
+
+   <http-conf:conduit name="{http://ws.xebia.fr/travel/antifraud/v1_0}AntiFraudService.http-conduit">
+      <http-conf:client ConnectionTimeout="500" ReceiveTimeout="3500" />
+   </http-conf:conduit>
+</beans>

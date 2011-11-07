@@ -1,0 +1,80 @@
+<configuration scan="true" debug="false">
+
+   <if condition='isNull("catalina.home")'>
+      <then>
+         <property name="BASE_FOLDER" value="./target" />
+      </then>
+      <else>
+         <property name="BASE_FOLDER" value="${catalina.home}" />
+      </else>
+   </if>
+   <property name="LOGS_FOLDER" value="${BASE_FOLDER}/logs" />
+   <property name="LOGS_TO_COLLECT_FOLDER" value="${BASE_FOLDER}/logs-to-collect" />
+
+   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+         <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [%thread] %-5level %logger{36} - %m %throwable{0}%n</pattern>
+      </encoder>
+   </appender>
+
+   <appender name="log-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS_FOLDER}/xebia-spring-travel-anti-fraud.log</file>
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+         <level>WARN</level>
+      </filter>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+         <fileNamePattern>${LOGS_TO_COLLECT_FOLDER}/xebia-spring-travel-anti-fraud.%d{yyyyMMdd}.log</fileNamePattern>
+      </rollingPolicy>
+      <encoder>
+         <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [%thread] %-5level %logger{36} - %m %throwable{0}%n</pattern>
+      </encoder>
+   </appender>
+
+   <appender name="audit-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS_FOLDER}/xebia-spring-travel-anti-fraud-audit.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+         <fileNamePattern>${LOGS_TO_COLLECT_FOLDER}/xebia-spring-travel-anti-fraud-audit.%d{yyyyMMdd}.log.gzip</fileNamePattern>
+      </rollingPolicy>
+      <encoder>
+         <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} %-5level %logger{36} - %m %throwable{0}%n</pattern>
+      </encoder>
+   </appender>
+
+   <appender name="performances-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS_FOLDER}/xebia-spring-travel-anti-fraud-performances.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+         <fileNamePattern>${LOGS_TO_COLLECT_FOLDER}/xebia-spring-travel-anti-fraud-performances.%d{yyyyMMdd}.log.gzip</fileNamePattern>
+      </rollingPolicy>
+      <encoder>
+         <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [%thread] %-5level %logger{36} - %m %throwable{0}%n</pattern>
+      </encoder>
+   </appender>
+
+   <appender name="troubleshooting-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS_FOLDER}/xebia-spring-travel-anti-fraud-troubleshooting.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+         <fileNamePattern>${LOGS_FOLDER}/xebia-spring-travel-anti-fraud-troubleshooting.%i.log</fileNamePattern>
+         <maxIndex>10</maxIndex>
+      </rollingPolicy>
+      <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+         <maxFileSize>10MB</maxFileSize>
+      </triggeringPolicy>
+      <encoder>
+         <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [%thread] %-5level %logger{36} - %m%n</pattern>
+      </encoder>
+   </appender>
+
+   <logger name="fr.xebia.audit" additivity="false" level="TRACE">
+      <appender-ref ref="audit-file" />
+   </logger>
+
+   <logger name="fr.xebia.performances" additivity="false" level="TRACE">
+      <appender-ref ref="performances-file" />
+   </logger>
+
+   <root level="WARN">
+      <appender-ref ref="console" />
+      <appender-ref ref="log-file" />
+      <appender-ref ref="troubleshooting-file" />
+   </root>
+</configuration>

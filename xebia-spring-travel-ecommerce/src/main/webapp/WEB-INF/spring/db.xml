@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+   xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
+   xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.xebia.fr/schema/xebia-management-extras http://www.xebia.fr/schema/management/xebia-management-extras.xsd">
+
+	<!-- Instructs Spring to perfrom declarative transaction management on annotated classes -->
+   <tx:annotation-driven />
+
+   <!-- Drives transactions using local JPA APIs -->
+   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="entityManagerFactory" />
+   </bean>
+
+   <!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider and a simple in-memory data source populated with test data -->
+   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+      <property name="jpaVendorAdapter">
+         <bean class="fr.xebia.springframework.orm.jpa.vendor.XHibernateJpaVendorAdapter">
+            <property name="database" value="${jpa.database}" />
+            <property name="showSql" value="false"/>
+            <property name="hbm2ddlAuto" value="${jpa.hbm2ddlAuto}"/>
+         </bean>
+      </property>
+   </bean>
+   <!-- Deploys a in-memory "booking" datasource populated -->
+   <management:dbcp-datasource id="dataSource">
+      <management:default-auto-commit value="false" />
+      <management:driver-class-name value="${jdbc.driver}" />
+      <management:url value="${jdbc.url}" />
+      <management:username value="${jdbc.username}" />
+      <management:password value="${jdbc.password}" />
+   </management:dbcp-datasource>
+</beans>
