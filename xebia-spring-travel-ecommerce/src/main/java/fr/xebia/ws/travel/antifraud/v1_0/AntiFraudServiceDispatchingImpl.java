@@ -20,7 +20,6 @@ import javax.management.ObjectName;
 
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
 import org.springframework.stereotype.Component;
@@ -36,29 +35,16 @@ public class AntiFraudServiceDispatchingImpl implements AntiFraudService, SelfNa
     @Autowired
     private AntiFraudService antiFraudService;
 
-    private AntiFraudService antiFraudServiceAlwaysOkImpl = new AntiFraudServiceAlwaysOkImpl();
-
     private String beanName;
-
-    private boolean enableAntiFraudService;
 
     @Override
     public String checkBooking(Booking booking) throws SuspiciousBookingException {
-        if (enableAntiFraudService) {
-            return antiFraudService.checkBooking(booking);
-        } else {
-            return antiFraudServiceAlwaysOkImpl.checkBooking(booking);
-        }
+        return antiFraudService.checkBooking(booking);
     }
 
     @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
         return new ObjectName(Monitoring.JMX_DOMAIN + ":type=AntiFraudService,name=" + beanName);
-    }
-
-    @ManagedAttribute
-    public boolean isEnableAntiFraudService() {
-        return enableAntiFraudService;
     }
 
     public void setAntiFraudService(AntiFraudService antiFraudService) {
@@ -70,13 +56,8 @@ public class AntiFraudServiceDispatchingImpl implements AntiFraudService, SelfNa
         this.beanName = name;
     }
 
-    @ManagedAttribute
-    public void setEnableAntiFraudService(boolean enableAntiFraudService) {
-        this.enableAntiFraudService = enableAntiFraudService;
-    }
-
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("enableAntiFraudService", enableAntiFraudService).toString();
+        return Objects.toStringHelper(this).add("enableAntiFraudService", true).toString();
     }
 }

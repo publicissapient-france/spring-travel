@@ -15,12 +15,7 @@
 
    <bean id="AntiFraudService" class="fr.xebia.ws.travel.antifraud.v1_0.AntiFraudServiceDispatchingImpl">
       <property name="antiFraudService" ref="antiFraudServiceWsImpl" />
-      <property name="enableAntiFraudService" value="${antifraudservice.enable}" />
    </bean>
-
-
-
-
 
    <!-- CXF -->
    <import resource="classpath:META-INF/cxf/cxf.xml" />
