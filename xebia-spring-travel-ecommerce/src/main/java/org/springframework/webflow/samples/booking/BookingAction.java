@@ -1,5 +1,8 @@
 package org.springframework.webflow.samples.booking;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.servlet.http.HttpServletResponse;
 import java.io.StringWriter;
 import java.util.Currency;
 import java.util.HashMap;
@@ -8,10 +11,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.servlet.http.HttpServletResponse;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
+import fr.xebia.monitoring.demo.Monitoring;
+import fr.xebia.ws.travel.antifraud.v1_0.AntiFraudService;
+import fr.xebia.ws.travel.antifraud.v1_0.CreditCard;
+import fr.xebia.ws.travel.antifraud.v1_0.CreditCardType;
+import fr.xebia.ws.travel.antifraud.v1_0.SuspiciousBookingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -34,16 +40,6 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.CompactWriter;
-
-import fr.xebia.management.statistics.Profiled;
-import fr.xebia.monitoring.demo.Monitoring;
-import fr.xebia.ws.travel.antifraud.v1_0.AntiFraudService;
-import fr.xebia.ws.travel.antifraud.v1_0.CreditCard;
-import fr.xebia.ws.travel.antifraud.v1_0.CreditCardType;
-import fr.xebia.ws.travel.antifraud.v1_0.SuspiciousBookingException;
 
 @ManagedResource
 @Component
@@ -127,7 +123,6 @@ public class BookingAction extends MultiAction implements SelfNaming, BeanNameAw
         this.beanName = name;
     }
 
-    @Profiled()
     public Event submitPayment(RequestContext context, Booking booking) throws Exception {
 
         long nanosBefore = System.nanoTime();

@@ -15,24 +15,20 @@
  */
 package fr.xebia.ws.travel.antifraud.v1_0;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import java.io.StringWriter;
 import java.util.Random;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
+import fr.xebia.monitoring.demo.Monitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.CompactWriter;
-
-import fr.xebia.management.statistics.Profiled;
-import fr.xebia.monitoring.demo.Monitoring;
 
 @ManagedResource
 public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming, BeanNameAware {
@@ -51,7 +47,6 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming, BeanN
 
     private XStream xstream = new XStream();
 
-    @Profiled(slowInvocationThresholdInMillis = 1000, verySlowInvocationThresholdInMillis = 2000)
     @Override
     public String checkBooking(Booking booking) throws SuspiciousBookingException {
         try {
