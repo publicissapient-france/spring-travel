@@ -123,7 +123,7 @@
          <artifactId>easymock</artifactId>
          <scope>test</scope>
       </dependency>
-      
+
       <!-- Groovy -->
       <dependency>
       	<groupId>org.codehaus.groovy</groupId>
@@ -131,4 +131,50 @@
       	<scope>provided</scope>
       </dependency>
    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>deployment</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.1.2</version>
+                        <executions>
+                            <execution>
+                                <id>Deployment</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <container>
+                                        <containerId>tomcat7x</containerId>
+                                        <home>${env.CATALINA_HOME}</home>
+                                    </container>
+
+                                    <deployer>
+                                        <type>installed</type>
+                                        <deployables>
+                                            <deployable>
+                                                <groupId>${project.groupId}</groupId>
+                                                <artifactId>${project.artifactId}</artifactId>
+                                                <type>war</type>
+                                            </deployable>
+                                        </deployables>
+                                    </deployer>
+
+                                    <configuration>
+                                        <type>existing</type>
+                                        <home>${env.CATALINA_HOME}</home>
+                                    </configuration>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
