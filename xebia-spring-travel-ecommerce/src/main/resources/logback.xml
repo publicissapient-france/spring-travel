@@ -64,12 +64,26 @@
       </encoder>
    </appender>
 
+   <appender name="timer-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS_FOLDER}/xebia-spring-travel-timer.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+         <fileNamePattern>${LOGS_TO_COLLECT_FOLDER}/xebia-spring-travel-timer.%d{yyyyMMdd}.log.gzip</fileNamePattern>
+      </rollingPolicy>
+      <encoder>
+         <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [%thread] %-5level %logger{36} - %m %throwable{0}%n</pattern>
+      </encoder>
+   </appender>
+
    <logger name="fr.xebia.audit" additivity="false" level="TRACE">
       <appender-ref ref="audit-file" />
    </logger>
 
    <logger name="fr.xebia.performances" additivity="false" level="TRACE">
       <appender-ref ref="performances-file" />
+   </logger>
+
+    <logger name="fr.xebia.timer" additivity="false" level="DEBUG">
+      <appender-ref ref="timer-file" />
    </logger>
 
    <root level="WARN">
