@@ -43,5 +43,16 @@
 	</aop:config>
 
   	<bean id="monLogger" class="fr.xebia.util.TimeLogger"/>
-   
+  	
+  	<!--  PLO AOP auto discovery -->
+  	<aop:aspectj-autoproxy/>
+  	
+  	<bean id="jpaLogger" class="fr.xebia.util.JpaLogger"/>
+  	
+  	<bean id="databaseCacheAspect" class="fr.xebia.util.DatabaseCacheAspect">
+  		<property name="hotelCache" ref="hotelCache"/>
+  	</bean>
+  	
+  	<bean id="hotelCache" class="fr.xebia.util.HotelCache"/>
+  	
 </beans>
