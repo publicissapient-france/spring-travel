@@ -67,6 +67,7 @@ public class JpaBookingService implements BookingService {
 	if (booking != null) {
 	    em.remove(booking);
 	}
+
     }
 
     // helpers
