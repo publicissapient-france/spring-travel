@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
    <!-- Scans for application @Components to deploy -->
-   <context:component-scan base-package="org.springframework.webflow.samples.booking" />
+   <context:component-scan base-package="org.springframework.webflow.samples" />
 
    <!-- Imports the configurations of the different infrastructure systems of the application -->
    <import resource="mvc.xml" />
@@ -42,6 +42,17 @@
 	    </aop:aspect>
 	</aop:config>
 
-  	<bean id="monLogger" class="fr.xebia.util.TimeLogger"/>
-   
+  	<bean id="monLogger" class="org.springframework.webflow.samples.util.TimeLogger"/>
+  	
+  	<!--  PLO AOP auto discovery -->
+  	<aop:aspectj-autoproxy/>
+  	
+  	<bean id="jpaLogger" class="org.springframework.webflow.samples.util.JpaLogger"/>
+  	
+  	<bean id="databaseCacheAspect" class="org.springframework.webflow.samples.util.DatabaseCacheAspect">
+  		<property name="hotelCache" ref="hotelCache"/>
+  	</bean>
+  	
+  	<bean id="hotelCache" class="org.springframework.webflow.samples.util.HotelCache"/>
+  	
 </beans>

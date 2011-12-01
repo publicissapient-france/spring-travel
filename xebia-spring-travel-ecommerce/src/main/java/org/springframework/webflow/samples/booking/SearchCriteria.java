@@ -1,6 +1,7 @@
 package org.springframework.webflow.samples.booking;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 
 /**
@@ -12,10 +13,21 @@ import java.io.Serializable;
  * eliminating the need for the actions in {@link MainActions}.
  */
 public class SearchCriteria implements Serializable {
+	
 
     private static final long serialVersionUID = 1L;
 
-    /**
+    private long timeOfSearch = Calendar.getInstance().getTime().getTime();
+    
+    public long getTimeOfSearch() {
+		return timeOfSearch;
+	}
+
+	public void setTimeOfSearch(int timeOfSearch) {
+		this.timeOfSearch = timeOfSearch;
+	}
+
+	/**
      * The user-provided search criteria for finding Hotels.
      */
     private String searchString;
@@ -53,4 +65,41 @@ public class SearchCriteria implements Serializable {
     public void setPage(int page) {
 	this.page = page;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + page;
+		result = prime * result + pageSize;
+		result = prime * result
+				+ ((searchString == null) ? 0 : searchString.hashCode());
+		result = prime * result + (int) (timeOfSearch ^ (timeOfSearch >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SearchCriteria other = (SearchCriteria) obj;
+		if (page != other.page)
+			return false;
+		if (pageSize != other.pageSize)
+			return false;
+		if (searchString == null) {
+			if (other.searchString != null)
+				return false;
+		} else if (!searchString.equals(other.searchString))
+			return false;
+		if (timeOfSearch != other.timeOfSearch)
+			return false;
+		return true;
+	}
+    
+    
 }
