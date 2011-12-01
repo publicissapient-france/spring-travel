@@ -43,4 +43,6 @@ public interface BookingService {
      */
     public void cancelBooking(Long id);
 
+	public void setEnabled(boolean b);
+
 }

@@ -34,6 +34,8 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.samples.util.BookingActionController;
+
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
@@ -71,7 +73,8 @@ public class BookingAction extends MultiAction implements SelfNaming,
 
 	private XStream xstream = new XStream();
 
-	private boolean isEnabled;
+	@Autowired
+	private BookingActionController bookingActionController;
 
 	@Autowired
 	public BookingAction(
@@ -145,7 +148,7 @@ public class BookingAction extends MultiAction implements SelfNaming,
 
 		try {
 			try {
-				if (isEnabled) {
+				if (bookingActionController.isEnabled()) {
 					synchronized (this) {
 						antiFraudService
 								.checkBooking(toAntiFraudBooking(booking));
@@ -198,10 +201,6 @@ public class BookingAction extends MultiAction implements SelfNaming,
 					.addAndGet(System.nanoTime() - nanosBefore);
 		}
 
-	}
-
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
 	}
 
 	fr.xebia.ws.travel.antifraud.v1_0.Booking toAntiFraudBooking(Booking booking) {

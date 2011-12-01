@@ -16,6 +16,11 @@
 package fr.xebia.ws.travel.antifraud.v1_0;
 
 import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Random;
 
 import javax.management.MalformedObjectNameException;
@@ -35,111 +40,153 @@ import fr.xebia.management.statistics.Profiled;
 import fr.xebia.monitoring.demo.Monitoring;
 
 @ManagedResource
-public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming, BeanNameAware {
+public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
+		BeanNameAware {
 
-    private final Logger auditLogger = LoggerFactory.getLogger("fr.xebia.audit.AntiFraudService");
+	private final Logger auditLogger = LoggerFactory
+			.getLogger("fr.xebia.audit.AntiFraudService");
 
-    private String beanName;
+	private String beanName;
 
-    private final Random random = new Random();
+	private final Random random = new Random();
 
-    private int slowRequestMinimumDurationInMillis = 2000;
+	private int slowRequestMinimumDurationInMillis = 2000;
 
-    private int slowRequestRatioInPercent = 0;
+	private int slowRequestRatioInPercent = 0;
 
-    private int suspiciousBookingRatioInPercent = 0;
+	private int suspiciousBookingRatioInPercent = 0;
 
-    private XStream xstream = new XStream();
+	private XStream xstream = new XStream();
 
-    @Profiled(slowInvocationThresholdInMillis = 1000, verySlowInvocationThresholdInMillis = 2000)
-    @Override
-    public String checkBooking(Booking booking) throws SuspiciousBookingException {
-        try {
-            randomlySlowRequest();
-            randomlyThrowException();
-            String result = "txid-" + Math.abs(random.nextLong());
+	@Profiled(slowInvocationThresholdInMillis = 1000, verySlowInvocationThresholdInMillis = 2000)
+	@Override
+	public String checkBooking(Booking booking)
+			throws SuspiciousBookingException {
+		try {
+			randomlySlowRequest();
+			randomlyThrowException();
+			checkDbOnline();
+			String result = "txid-" + Math.abs(random.nextLong());
 
-            auditLogger.info("Authorize booking " + toXmlString(booking) + " " + result);
+			auditLogger.info("Authorize booking " + toXmlString(booking) + " "
+					+ result);
 
-            return result;
-        } catch (SuspiciousBookingException e) {
-            auditLogger.error("Reject booking " + toXmlString(booking) + " " + e);
-            throw e;
-        } catch (RuntimeException e) {
-            auditLogger.error("Exception checking booking " + toXmlString(booking) + " " + e);
-            throw e;
-        }
-    }
+			return result;
+		} catch (SuspiciousBookingException e) {
+			auditLogger.error("Reject booking " + toXmlString(booking) + " "
+					+ e);
+			throw e;
+		} catch (RuntimeException e) {
+			auditLogger.error("Exception checking booking "
+					+ toXmlString(booking) + " " + e);
+			throw e;
+		}
+	}
 
-    @Override
-    public ObjectName getObjectName() throws MalformedObjectNameException {
-        return new ObjectName(Monitoring.JMX_DOMAIN + ":type=AntiFraudService,name=" + beanName);
-    }
+	private boolean checkDbOnline() {
+		try {
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			Connection connection = DriverManager.getConnection("jdbc:mysql://xebiaspringtravel.cccb4ickfoh9.eu-west-1.rds.amazonaws.com:3306/xebiaspringtravel");
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
+			resultSet.close();
+			statement.close();
+			connection.close();
+		} catch (Exception e) {
+			return false;
+		} 
+		try {
+			Connection connection = DriverManager.getConnection("jdbc.url=jdbc:hsqldb:mem:aname");
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
+			resultSet.close();
+			statement.close();
+			connection.close();
 
-    @ManagedAttribute
-    public int getSlowRequestMinimumDurationInMillis() {
-        return slowRequestMinimumDurationInMillis;
-    }
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
 
-    @ManagedAttribute
-    public int getSlowRequestRatioInPercent() {
-        return slowRequestRatioInPercent;
-    }
+	@Override
+	public ObjectName getObjectName() throws MalformedObjectNameException {
+		return new ObjectName(Monitoring.JMX_DOMAIN
+				+ ":type=AntiFraudService,name=" + beanName);
+	}
 
-    @ManagedAttribute
-    public int getSuspiciousBookingRatioInPercent() {
-        return suspiciousBookingRatioInPercent;
-    }
+	@ManagedAttribute
+	public int getSlowRequestMinimumDurationInMillis() {
+		return slowRequestMinimumDurationInMillis;
+	}
 
-    protected void randomlySlowRequest() {
+	@ManagedAttribute
+	public int getSlowRequestRatioInPercent() {
+		return slowRequestRatioInPercent;
+	}
 
-        long sleepDurationInMillis = random.nextInt(200);
+	@ManagedAttribute
+	public int getSuspiciousBookingRatioInPercent() {
+		return suspiciousBookingRatioInPercent;
+	}
 
-        if (slowRequestRatioInPercent == 0) {
-        } else if (0 == random.nextInt(100 / slowRequestRatioInPercent)) {
-            sleepDurationInMillis += slowRequestMinimumDurationInMillis;
-        }
-        try {
-            Thread.sleep(sleepDurationInMillis);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
+	protected void randomlySlowRequest() {
 
-    }
+		long sleepDurationInMillis = random.nextInt(200);
 
-    protected void randomlyThrowException() throws SuspiciousBookingException {
-        if (suspiciousBookingRatioInPercent == 0) {
-            return;
-        } else if (0 == random.nextInt(100 / suspiciousBookingRatioInPercent)) {
-            SuspiciousBookingFault suspiciousBookingFault = new SuspiciousBookingFault();
-            suspiciousBookingFault.setMessage("Suspicious booking");
-            throw new SuspiciousBookingException("Suspicious booking", suspiciousBookingFault);
-        }
-    }
+		if (slowRequestRatioInPercent == 0) {
+		} else if (0 == random.nextInt(100 / slowRequestRatioInPercent)) {
+			sleepDurationInMillis += slowRequestMinimumDurationInMillis;
+		}
+		try {
+			Thread.sleep(sleepDurationInMillis);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		}
 
-    @Override
-    public void setBeanName(String name) {
-        this.beanName = name;
-    }
+	}
 
-    @ManagedAttribute
-    public void setSlowRequestMinimumDurationInMillis(int slowRequestMinimumDurationInMillis) {
-        this.slowRequestMinimumDurationInMillis = slowRequestMinimumDurationInMillis;
-    }
+	protected void randomlyThrowException() throws SuspiciousBookingException {
+		if (suspiciousBookingRatioInPercent == 0) {
+			return;
+		} else if (0 == random.nextInt(100 / suspiciousBookingRatioInPercent)) {
+			SuspiciousBookingFault suspiciousBookingFault = new SuspiciousBookingFault();
+			suspiciousBookingFault.setMessage("Suspicious booking");
+			throw new SuspiciousBookingException("Suspicious booking",
+					suspiciousBookingFault);
+		}
+	}
 
-    @ManagedAttribute
-    public void setSlowRequestRatioInPercent(int slowRequestRatioInPercent) {
-        this.slowRequestRatioInPercent = slowRequestRatioInPercent;
-    }
+	@Override
+	public void setBeanName(String name) {
+		this.beanName = name;
+	}
 
-    @ManagedAttribute
-    public void setSuspiciousBookingRatioInPercent(int suspiciousBookingRatio) {
-        this.suspiciousBookingRatioInPercent = suspiciousBookingRatio;
-    }
+	@ManagedAttribute
+	public void setSlowRequestMinimumDurationInMillis(
+			int slowRequestMinimumDurationInMillis) {
+		this.slowRequestMinimumDurationInMillis = slowRequestMinimumDurationInMillis;
+	}
 
-    protected String toXmlString(Object o) {
-        StringWriter writer = new StringWriter();
-        xstream.marshal(o, new CompactWriter(writer));
-        return writer.toString();
-    }
+	@ManagedAttribute
+	public void setSlowRequestRatioInPercent(int slowRequestRatioInPercent) {
+		this.slowRequestRatioInPercent = slowRequestRatioInPercent;
+	}
+
+	@ManagedAttribute
+	public void setSuspiciousBookingRatioInPercent(int suspiciousBookingRatio) {
+		this.suspiciousBookingRatioInPercent = suspiciousBookingRatio;
+	}
+
+	protected String toXmlString(Object o) {
+		StringWriter writer = new StringWriter();
+		xstream.marshal(o, new CompactWriter(writer));
+		return writer.toString();
+	}
 }
