@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-   xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.xebia.fr/schema/xebia-management-extras http://www.xebia.fr/schema/management/xebia-management-extras.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
    <!-- Scans for application @Components to deploy -->
    <context:component-scan base-package="org.springframework.webflow.samples.booking" />
@@ -28,4 +32,27 @@
    <management:profile-aspect server="mbeanServer" jmxDomain="travel-ecommerce" />
    <management:application-version-mbean jmxDomain="travel-ecommerce" />
    <context:mbean-export server="mbeanServer" />
+
+    <!-- AOP configuration -->
+	<aop:config>
+		<aop:pointcut id="firstPointcut"  expression="execution(* fr.xebia..*(..))"/>
+		<aop:aspect id="loggingAspect" ref="monLogger">
+		    <aop:before method="logMethodEntry"  pointcut-ref="firstPointcut"/>
+		    <aop:after-returning method="logMethodExit" returning="result" pointcut-ref="firstPointcut"/>
+	    </aop:aspect>
+	</aop:config>
+
+  	<bean id="monLogger" class="fr.xebia.util.TimeLogger"/>
+  	
+  	<!--  PLO AOP auto discovery -->
+  	<aop:aspectj-autoproxy/>
+  	
+  	<bean id="jpaLogger" class="fr.xebia.util.JpaLogger"/>
+  	
+  	<bean id="databaseCacheAspect" class="fr.xebia.util.DatabaseCacheAspect">
+  		<property name="hotelCache" ref="hotelCache"/>
+  	</bean>
+  	
+  	<bean id="hotelCache" class="fr.xebia.util.HotelCache"/>
+  	
 </beans>
