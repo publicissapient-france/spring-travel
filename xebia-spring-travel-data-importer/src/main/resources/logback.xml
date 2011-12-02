@@ -7,7 +7,7 @@
 
     <logger name="fr" level="DEBUG"/>
 
-    <root level="debug">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

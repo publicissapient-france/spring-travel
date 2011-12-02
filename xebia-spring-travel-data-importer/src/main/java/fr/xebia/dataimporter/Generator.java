@@ -1,11 +1,11 @@
 package fr.xebia.dataimporter;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -30,9 +30,16 @@ public class Generator {
 
     static {
         try {
-            ANIMALS = FileUtils.readLines(new File(ClassLoader.getSystemResource("animals").getFile()));
-            HOTEL_TYPES = FileUtils.readLines(new File(ClassLoader.getSystemResource("hotel-types").getFile()));
-            NAMES = FileUtils.readLines(new File(ClassLoader.getSystemResource("names").getFile()));
+            final InputStream animalsStream = Generator.class.getResource("animals").openStream();
+            final InputStream hotelTypesStream = Generator.class.getResource("hotel-types").openStream();
+            final InputStream namesStream = Generator.class.getResource("names").openStream();
+            ANIMALS = IOUtils.readLines(animalsStream);
+            HOTEL_TYPES = IOUtils.readLines(hotelTypesStream);
+            NAMES = IOUtils.readLines(namesStream);
+
+            animalsStream.close();
+            hotelTypesStream.close();
+            namesStream.close();
 
             Class.forName("org.hsqldb.jdbc.JDBCDriver");
         } catch (IOException e) {
@@ -61,7 +68,7 @@ public class Generator {
     }
 
     public void generateCustomerFromTo(int from, int to) throws SQLException {
-        LOG.info("Importing customers...");
+        LOG.info("Generating customers...");
 
         LOG.debug("Deleting every customer");
         statement.executeUpdate("DELETE FROM Customer");
@@ -91,7 +98,7 @@ public class Generator {
 
             statement.executeUpdate(currentUserStatement);
 
-            if(count % 100 == 0) {
+            if (count % 100 == 0) {
                 statement.clearBatch();
                 statement.clearWarnings();
             }
@@ -100,7 +107,7 @@ public class Generator {
     }
 
     public void generateHotelFromTo(int from, int to) throws SQLException {
-        LOG.info("Importing hotels...");
+        LOG.info("Generating hotels...");
 
         LOG.debug("Deleting every hotel");
         statement.executeUpdate("DELETE FROM Hotel");
@@ -151,7 +158,7 @@ public class Generator {
 
             statement.executeUpdate(currentHotelStatement);
 
-            if(count % 100 == 0) {
+            if (count % 100 == 0) {
                 statement.clearBatch();
                 statement.clearWarnings();
             }
@@ -160,7 +167,7 @@ public class Generator {
     }
 
     public void generateUsersFromTo(int from, int to) throws SQLException {
-        LOG.info("Importing users...");
+        LOG.info("Generating users...");
 
         LOG.debug("Deleting every user");
         statement.executeUpdate("DELETE FROM Users");
@@ -186,7 +193,7 @@ public class Generator {
 
             statement.executeUpdate(currentUserStatement);
 
-            if(count % 100 == 0) {
+            if (count % 100 == 0) {
                 statement.clearBatch();
                 statement.clearWarnings();
             }
@@ -195,7 +202,7 @@ public class Generator {
     }
 
     public void generateAuthoritiesFromTo(int from, int to) throws SQLException {
-        LOG.info("Importing authorities...");
+        LOG.info("Generating authorities...");
 
         LOG.debug("Deleting every authority");
         statement.executeUpdate("DELETE FROM authorities");
@@ -220,7 +227,7 @@ public class Generator {
 
             statement.executeUpdate(currentAuthorityStatement);
 
-            if(count % 100 == 0) {
+            if (count % 100 == 0) {
                 statement.clearBatch();
                 statement.clearWarnings();
             }
@@ -250,14 +257,14 @@ public class Generator {
 
     public static void main(String... args) {
         Integer numberOfEntries = null;
-        if(args.length == 1 ) {
+        if (args.length == 1) {
             try {
                 numberOfEntries = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                 LOG.error("Invalid argument : a number is expected");
+                LOG.error("Invalid argument : a number is expected");
             }
         }
-        if(numberOfEntries == null) {
+        if (numberOfEntries == null) {
             LOG.error("Usage: Generator <number of entries>");
             System.exit(1);
         }
