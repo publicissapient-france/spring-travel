@@ -1,9 +1,5 @@
 package fr.xebia.dataimporter;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -11,6 +7,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Generator {
 
@@ -27,6 +28,7 @@ public class Generator {
     public static final List<String> NAMES;
 
     private final Statement statement;
+    private final String db;
 
     static {
         try {
@@ -42,6 +44,7 @@ public class Generator {
             namesStream.close();
 
             Class.forName("org.hsqldb.jdbc.JDBCDriver");
+            Class.forName("com.mysql.jdbc.Driver");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } catch (ClassNotFoundException e) {
@@ -49,8 +52,10 @@ public class Generator {
         }
     }
 
-    public Generator(Statement statement) {
+    public Generator(Statement statement, String db) {
         this.statement = statement;
+        this.db = db;
+
     }
 
     public String random(List<String>... lists) {
@@ -74,10 +79,10 @@ public class Generator {
         statement.executeUpdate("DELETE FROM Customer");
 
         LOG.debug("Generating the default customers");
-        statement.executeUpdate("insert into Customer (username, first, last, email) values ('erwin', 'Erwin', 'Vervaet', 'evervaet@springtravel.com')");
-        statement.executeUpdate("insert into Customer (username, first, last, email) values ('jeremy', 'Jeremy', 'Grelle', 'jgrelle@springtravel.com')");
-        statement.executeUpdate("insert into Customer (username, first, last, email) values ('keith', 'Keith', 'Donald', 'kdonald@springtravel.com')");
-        statement.executeUpdate("insert into Customer (username, first, last, email) values ('scott', 'Scott', 'Andrews', 'sandrews@springtravel.com')");
+        statement.executeUpdate("insert into Customer (username, first, last, email, password) values ('erwin', 'Erwin', 'Vervaet', 'evervaet@springtravel.com', '12430911a8af075c6f41c6976af22b09')");
+        statement.executeUpdate("insert into Customer (username, first, last, email, password) values ('jeremy', 'Jeremy', 'Grelle', 'jgrelle@springtravel.com', '57c6cbff0d421449be820763f03139eb')");
+        statement.executeUpdate("insert into Customer (username, first, last, email, password) values ('keith', 'Keith', 'Donald', 'kdonald@springtravel.com', '417c7382b16c395bc25b5da1398cf076')");
+        statement.executeUpdate("insert into Customer (username, first, last, email, password) values ('scott', 'Scott', 'Andrews', 'sandrews@springtravel.com', '942f2339bf50796de535a384f0d1af3e')");
 
         LOG.debug("Generating {} customers", (to - from));
         for (int count = from; count < to; count++) {
@@ -170,25 +175,24 @@ public class Generator {
         LOG.info("Generating users...");
 
         LOG.debug("Deleting every user");
-        statement.executeUpdate("DELETE FROM Users");
+        statement.executeUpdate("DELETE FROM Customer");
 
         LOG.debug("Generating the default users");
-        statement.executeUpdate("insert into users (username, password, enabled) values ('erwin', '12430911a8af075c6f41c6976af22b09', true)");
-        statement.executeUpdate("insert into users (username, password, enabled) values ('jeremy', '57c6cbff0d421449be820763f03139eb', true)");
-        statement.executeUpdate("insert into users (username, password, enabled) values ('keith', '417c7382b16c395bc25b5da1398cf076', true)");
-        statement.executeUpdate("insert into users (username, password, enabled) values ('scott', '942f2339bf50796de535a384f0d1af3e', true)");
+        statement.executeUpdate("insert into Customer (username, password) values ('erwin', '12430911a8af075c6f41c6976af22b09')");
+        statement.executeUpdate("insert into Customer (username, password) values ('jeremy', '57c6cbff0d421449be820763f03139eb')");
+        statement.executeUpdate("insert into Customer (username, password) values ('keith', '417c7382b16c395bc25b5da1398cf076')");
+        statement.executeUpdate("insert into Customer (username, password) values ('scott', '942f2339bf50796de535a384f0d1af3e')");
 
         LOG.debug("Generating {} users", (to - from));
         for (int count = from; count < to; count++) {
             final String countOn6Digits = String.format("%06d", count);
             final String username = "user-" + countOn6Digits;
 
-            final String usersStatement = "insert into users (username, password, enabled) " +
-                    "values ('%s', '%s', %b);";
+            final String usersStatement = "insert into Customer (username, password) " +
+                    "values ('%s', '%s');";
             final String currentUserStatement = String.format(usersStatement,
                     username,
-                    DEFAULT_PASSWORD,
-                    "enabled"
+                    DEFAULT_PASSWORD
             );
 
             statement.executeUpdate(currentUserStatement);
@@ -203,7 +207,7 @@ public class Generator {
 
     public void generateAuthoritiesFromTo(int from, int to) throws SQLException {
         LOG.info("Generating authorities...");
-
+ /*
         LOG.debug("Deleting every authority");
         statement.executeUpdate("DELETE FROM authorities");
 
@@ -232,57 +236,57 @@ public class Generator {
                 statement.clearWarnings();
             }
         }
-        LOG.debug("Done.");
+        LOG.debug("Done."); */
     }
 
 
-    private void createTables(Statement statement) throws SQLException {
-        statement.executeUpdate("drop sequence hibernate_sequences if exists");
-        statement.executeUpdate("drop table authorities if exists");
-        statement.executeUpdate("drop table booking if exists");
-        statement.executeUpdate("drop table customer if exists");
-        statement.executeUpdate("drop table hotel if exists");
-        statement.executeUpdate("drop table users if exists");
-
-        statement.executeUpdate("create sequence hibernate_sequences");
-        statement.executeUpdate("CREATE CACHED TABLE AUTHORITIES ( USERNAME varchar(255), AUTHORITY varchar(255) ) ;");
-        statement.executeUpdate("CREATE CACHED TABLE BOOKING ( ID bigint PRIMARY KEY NOT NULL, BEDS integer NOT NULL, CHECKINDATE date, CHECKOUTDATE date, CITY varchar(255), CREDITCARDEXPIRYMONTH varchar(255), CREDITCARDEXPIRYYEAR integer NOT NULL, CREDITCARDNAME varchar(255), CREDITCARDNUMBER varchar(255), CREDITCARDTYPE varchar(255), LINE1 varchar(255), PHONE varchar(255), SMOKING bit NOT NULL, STATE varchar(255), ZIP varchar(255), HOTEL_ID bigint, USER_USERNAME varchar(255) )");
-        statement.executeUpdate("CREATE CACHED TABLE CUSTOMER ( USERNAME varchar(255) PRIMARY KEY NOT NULL, EMAIL varchar(255), FIRST varchar(255), LAST varchar(255), PASSWORD varchar(255) )");
-        statement.executeUpdate("CREATE CACHED TABLE HOTEL ( ID bigint PRIMARY KEY NOT NULL, ADDRESS varchar(255), CITY varchar(255), COUNTRY varchar(255), NAME varchar(255), PRICE numeric, STATE varchar(255), ZIP varchar(255) )");
-        statement.executeUpdate("CREATE CACHED TABLE USERS ( USERNAME varchar(255), PASSWORD varchar(255), ENABLED boolean )");
-
-        statement.executeUpdate("ALTER TABLE BOOKING ADD CONSTRAINT FK6713A039BF91BB8D FOREIGN KEY (HOTEL_ID) REFERENCES HOTEL (ID)");
-        statement.executeUpdate("ALTER TABLE BOOKING ADD CONSTRAINT FK6713A03975CC21E2 FOREIGN KEY (USER_USERNAME) REFERENCES CUSTOMER (USERNAME)");
+    private void createTables() throws SQLException {
+        SchemasExecutor executor = new SchemasExecutor(statement, Generator.class.getResourceAsStream("/"+db+".sql"));
+        executor.execute();
     }
 
     public static void main(String... args) {
         Integer numberOfEntries = null;
-        if (args.length == 1) {
+        String db = "hsql";
+        if (args.length >= 1) {
             try {
                 numberOfEntries = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                LOG.error("Invalid argument : a number is expected");
+                LOG.error("Invalid number argument : a number is expected");
+            }
+
+            if (args.length >= 2){
+                db = args[1];
+                if (!db.equals("hsql") && ! db.equals("mysql")){
+                    LOG.error("Database should be hsql or mysql\nUsage: Generator <number of entries> [mysql/hsql]");
+                }
             }
         }
         if (numberOfEntries == null) {
-            LOG.error("Usage: Generator <number of entries>");
+            LOG.error("Usage: Generator <number of entries> [mysql/hsql]");
             System.exit(1);
         }
 
         Connection connection = null;
         Statement statement = null;
         try {
-            connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/booking", "SA", "");
-            statement = connection.createStatement();
-            Generator generator = new Generator(statement);
 
-            generator.createTables(statement);
+            Properties properties = new Properties();
+            properties.load(Generator.class.getResourceAsStream("/"+db+".properties"));
+            connection = DriverManager.getConnection(properties.getProperty("jdbc.url"),
+                    properties.getProperty("jdbc.name", ""), properties.getProperty("jdbc.password", ""));
+            statement = connection.createStatement();
+            Generator generator = new Generator(statement, db);
+
+            generator.createTables();
 
             generator.generateUsersFromTo(1, numberOfEntries);
             generator.generateHotelFromTo(1, numberOfEntries);
             generator.generateAuthoritiesFromTo(1, numberOfEntries);
             generator.generateCustomerFromTo(1, numberOfEntries);
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {

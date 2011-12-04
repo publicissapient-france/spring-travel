@@ -1,5 +1,6 @@
 package org.springframework.webflow.samples.booking;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -20,11 +21,16 @@ import org.springframework.util.StringUtils;
 public class JpaBookingService implements BookingService {
 
     private EntityManager em;
-	private boolean isEnabled=true;
-	
+	private boolean isEnabledBookings =true;
 
-    public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+    private boolean isEnabledHotels = true;
+
+    public void setEnabledHotels(boolean enabledHotels) {
+        isEnabledHotels = enabledHotels;
+    }
+
+    public void setEnabledBookings(boolean isEnabled) {
+		this.isEnabledBookings = isEnabled;
 	}
 
 	@PersistenceContext
@@ -36,7 +42,7 @@ public class JpaBookingService implements BookingService {
     @SuppressWarnings("unchecked")
     public List<Booking> findBookings(String username) {
 	if (username != null) {
-			if (isEnabled){
+			if (isEnabledBookings){
 	    return em.createQuery("select distinct b from Booking b left join fetch b.hotel f left join fetch f.bookings where b.user.username = :username order by b.checkinDate")
 		    .setParameter("username", username).getResultList();}
 		else {
@@ -51,11 +57,29 @@ public class JpaBookingService implements BookingService {
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public List<Hotel> findHotels(SearchCriteria criteria) {
-	String pattern = getSearchPattern(criteria);
-	return em.createQuery(
-		"select h from Hotel h where lower(h.name) like " + pattern + " or lower(h.city) like " + pattern
-			+ " or lower(h.zip) like " + pattern + " or lower(h.address) like " + pattern).setMaxResults(
-		criteria.getPageSize()).setFirstResult(criteria.getPage() * criteria.getPageSize()).getResultList();
+	    String pattern = getSearchPattern(criteria);
+        if (isEnabledHotels){
+             List<Hotel> hotels = em.createQuery("select h from Hotel h where lower(h.name) like " + pattern + " or lower(h.city) like " + pattern
+			    + " or lower(h.zip) like " + pattern + " or lower(h.address) like " + pattern).getResultList();
+            List<Hotel> res = new ArrayList<Hotel>();
+            int i = 0;
+            for (Hotel h : hotels){
+                if (i>= criteria.getPage() * criteria.getPageSize()){
+                    res.add(h);
+                    if (res.size() == criteria.getPageSize()){
+                        break;
+                    }
+                }
+                i++;
+            }
+            return res;
+
+        } else {
+	    return em.createQuery(
+		    "select h from Hotel h where lower(h.name) like " + pattern + " or lower(h.city) like " + pattern
+			    + " or lower(h.zip) like " + pattern + " or lower(h.address) like " + pattern).setMaxResults(
+		    criteria.getPageSize()).setFirstResult(criteria.getPage() * criteria.getPageSize()).getResultList();
+        }
     }
 
     @Transactional(readOnly = true)
