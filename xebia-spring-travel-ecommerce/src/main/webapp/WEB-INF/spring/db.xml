@@ -32,5 +32,8 @@
       <management:url value="${jdbc.url}" />
       <management:username value="${jdbc.username}" />
       <management:password value="${jdbc.password}" />
+      <management:initial-size value="${jdbc.initial}"/>
+      <management:max-active value="${jdbc.max}"/>
+      <management:max-wait value="${jdbc.maxWait}"/>
    </management:dbcp-datasource>
 </beans>

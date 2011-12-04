@@ -33,30 +33,7 @@
 
    <build>
       <plugins>
-         <plugin>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-codegen-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>generate-sources-customerService-1.0</id>
-                  <phase>generate-sources</phase>
-                  <configuration>
-                     <wsdlOptions>
-                        <wsdlOption>
-                           <wsdl>${basedir}/src/main/resources/META-INF/wsdl/antiFraudService-1.0.wsdl</wsdl>
-                           <extraargs>
-                              <extraarg>-b</extraarg>
-                              <extraarg>${basedir}/src/main/resources/META-INF/wsdl/binding.xjb</extraarg>
-                           </extraargs>
-                        </wsdlOption>
-                     </wsdlOptions>
-                  </configuration>
-                  <goals>
-                     <goal>wsdl2java</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
+         
       </plugins>
    </build>
 </project>

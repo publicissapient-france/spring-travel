@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
    <!-- Scans for application @Components to deploy -->
-   <context:component-scan base-package="org.springframework.webflow.samples.booking" />
+   <context:component-scan base-package="org.springframework.webflow.samples" />
 
    <!-- Imports the configurations of the different infrastructure systems of the application -->
    <import resource="mvc.xml" />
@@ -28,9 +28,10 @@
    <!-- @Configuration classes contributing Spring beans. -->
    <bean class="org.springframework.webflow.samples.booking.PaymentConfiguration" />
 
-   <management:servlet-context-aware-mbean-server id="mbeanServer" />
+   <!--  <management:servlet-context-aware-mbean-server id="mbeanServer" /> 
    <management:profile-aspect server="mbeanServer" jmxDomain="travel-ecommerce" />
-   <management:application-version-mbean jmxDomain="travel-ecommerce" />
+   <management:application-version-mbean jmxDomain="travel-ecommerce" />-->
+   <context:mbean-server id="mbeanServer"/>
    <context:mbean-export server="mbeanServer" />
 
     <!-- AOP configuration -->
@@ -42,17 +43,21 @@
 	    </aop:aspect>
 	</aop:config>
 
-  	<bean id="monLogger" class="fr.xebia.util.TimeLogger"/>
+  	<bean id="monLogger" class="org.springframework.webflow.samples.util.TimeLogger"/>
   	
   	<!--  PLO AOP auto discovery -->
   	<aop:aspectj-autoproxy/>
   	
-  	<bean id="jpaLogger" class="fr.xebia.util.JpaLogger"/>
+  	<bean id="jpaLogger" class="org.springframework.webflow.samples.util.JpaLogger"/>
   	
-  	<bean id="databaseCacheAspect" class="fr.xebia.util.DatabaseCacheAspect">
+  	<bean id="databaseCacheAspect" class="org.springframework.webflow.samples.util.DatabaseCacheAspect">
   		<property name="hotelCache" ref="hotelCache"/>
   	</bean>
   	
-  	<bean id="hotelCache" class="fr.xebia.util.HotelCache"/>
+  	<bean id="hotelCache" class="org.springframework.webflow.samples.util.HotelCache"/>
+  	
+  	<bean id="bugController" class="org.springframework.webflow.samples.util.BugController"/>
+  	
+  
   	
 </beans>

@@ -300,7 +300,7 @@
       <module>xebia-spring-travel-common</module>
       <module>xebia-spring-travel-antifraud</module>
       <module>xebia-spring-travel-ecommerce</module>
-      <!--<module>xebia-spring-travel-amazon-aws</module>-->
+      <module>xebia-spring-travel-data-importer</module>
    </modules>
 
    <build>

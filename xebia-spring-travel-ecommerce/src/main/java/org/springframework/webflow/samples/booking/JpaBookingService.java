@@ -20,8 +20,14 @@ import org.springframework.util.StringUtils;
 public class JpaBookingService implements BookingService {
 
     private EntityManager em;
+	private boolean isEnabled=true;
+	
 
-    @PersistenceContext
+    public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+
+	@PersistenceContext
     public void setEntityManager(EntityManager em) {
 	this.em = em;
     }
@@ -30,8 +36,13 @@ public class JpaBookingService implements BookingService {
     @SuppressWarnings("unchecked")
     public List<Booking> findBookings(String username) {
 	if (username != null) {
-	    return em.createQuery("select b from Booking b where b.user.username = :username order by b.checkinDate")
-		    .setParameter("username", username).getResultList();
+			if (isEnabled){
+	    return em.createQuery("select distinct b from Booking b left join fetch b.hotel f left join fetch f.bookings where b.user.username = :username order by b.checkinDate")
+		    .setParameter("username", username).getResultList();}
+		else {
+			return em.createQuery("select  b from Booking b where b.user.username = :username order by b.checkinDate")
+				    .setParameter("username", username).getResultList();
+		}
 	} else {
 	    return null;
 	}
