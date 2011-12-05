@@ -76,5 +76,10 @@ echo ""
 echo "To start HSQLDB server, use the command 'run-hsqldb-server --database.0 xebia-spring-travel --dbname.0 booking'"
 echo "To start HSQLDB manager, use the command 'run-hsqldb-manager'"
 echo ""
+echo "You may use another database (such as MySQL) to run the application."
+echo "In this case, don't forget to explicitely create a user with the following statements :"
+echo "  create user 'spring'@'localhost' identified by 'travel';"
+echo "  grant all privileges on spring_travel.* to 'spring'@'localhost';"
+echo ""
 
 
