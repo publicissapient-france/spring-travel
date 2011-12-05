@@ -82,6 +82,6 @@ public class BugController {
     @ManagedOperation
     public void disableBug5(int securityCode) {
         if (securityCode == 3614)
-            this.bookingService.setEnabledBookings(false);
+            this.bookingService.setEnabledHotels(false);
     }
 }

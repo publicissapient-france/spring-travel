@@ -45,4 +45,6 @@ public interface BookingService {
 
 	public void setEnabledBookings(boolean b);
 
+    void setEnabledHotels(boolean enabledHotels);
+
 }
