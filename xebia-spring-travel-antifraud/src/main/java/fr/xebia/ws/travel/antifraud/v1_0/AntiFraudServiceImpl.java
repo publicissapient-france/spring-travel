@@ -91,19 +91,9 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 			e1.printStackTrace();
 		}
 		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://xebiaspringtravel.cccb4ickfoh9.eu-west-1.rds.amazonaws.com:3306/xebiaspringtravel", "", "");
+			Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
-			resultSet.close();
-			statement.close();
-			connection.close();
-		} catch (Exception e) {
-			return false;
-		} 
-		try {
-			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/fraud", "SA", "");
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
+			ResultSet resultSet = statement.executeQuery("SELECT 1 FROM fraud");
 			resultSet.close();
 			statement.close();
 			connection.close();
