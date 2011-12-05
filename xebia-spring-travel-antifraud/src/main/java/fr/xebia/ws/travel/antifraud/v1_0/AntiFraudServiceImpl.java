@@ -101,7 +101,7 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 			return false;
 		} 
 		try {
-			Connection connection = DriverManager.getConnection("jdbc.url=jdbc:hsqldb:mem:aname");
+			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/fraud", "SA", "");
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
 			resultSet.close();
