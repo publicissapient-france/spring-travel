@@ -25,7 +25,7 @@
 	<security:authentication-manager>
 		<security:authentication-provider>
 			<security:password-encoder hash="md5" />
-            <security:jdbc-user-service data-source-ref="dataSource" authorities-by-username-query="Select `username`,'ROLE_USER' From Customer WHERE username = ?" users-by-username-query="select username,password,true From Customer WHERE username= ?"/>
+            <security:jdbc-user-service data-source-ref="dataSource" authorities-by-username-query="Select username,'ROLE_USER' From Customer WHERE username = ?" users-by-username-query="select username,password,true From Customer WHERE username= ?"/>
 
 			<!-- <security:user-service>
 				<security:user name="keith" password="417c7382b16c395bc25b5da1398cf076" authorities="ROLE_USER, ROLE_SUPERVISOR" />
