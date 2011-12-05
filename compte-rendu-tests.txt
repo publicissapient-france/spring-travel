@@ -1,0 +1,36 @@
+# 
+# Remarques diverses
+# 
+Après un premier lancement, Tomcat se retrouve bloqué. Tous ses threads sont bloqués (comportement constaté via la ThreadPool exposée via JMX)
+
+Contournement : 
+- Ramp-Up à 200 secondes
+- Lancement du JMeter (tout se met en place)
+- Après constatation que tout est OK, réinitialisation du JMeter
+- Ramp-Up à 1 seconde
+
+# 
+# Protocole de test
+# 
+
+Démarrage du serveur tomcat
+Déroulement d'un scénario de commande à la mano
+
+Lancement du script JMeter avec
+- 100 Threads
+- 1 seconde de Ramp-Up
+- Infinite Loop
+Attente du passage de 20.000 requêtes (totales)
+
+Effacement des résultats
+Lancement du script JMeter
+Attente du passage de 20.000 requêtes (totales)
+Sauvegarde du résultat dans le fichier statistics-100-with-bombs.csv
+
+Désactivation des bombs via JXM (toutes les bombes)
+
+Effacement des résultats
+Lancement du script JMeter
+Attente du passage de 20.000 requêtes (totales)
+Sauvegarde du résultat dans le fichier statistics-100-without-bombs.csv
+
