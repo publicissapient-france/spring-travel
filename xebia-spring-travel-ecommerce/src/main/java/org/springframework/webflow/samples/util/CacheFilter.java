@@ -170,8 +170,11 @@ public class CacheFilter implements Filter {
 			}
 
 			// Return cached content if available
-			String path = context.getRealPath("") + request.getRequestURI()
-					+ request.getQueryString();
+			String path = "";
+			if (context != null) {
+				path += context.getRealPath("");
+			}
+			path += request.getRequestURI() + request.getQueryString();
 			CacheEntry cacheEntry = cache.get(path);
 			if (cacheEntry != null) {
 				response.setContentType(cacheEntry.t);
