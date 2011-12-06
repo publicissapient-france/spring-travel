@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-@ManagedResource("travel-ecommerce:type=BugController")
+@ManagedResource("travel-ecommerce:type=CacheFilter")
 public class CacheFilter implements Filter {
 
 	private boolean isEnabled = true;
