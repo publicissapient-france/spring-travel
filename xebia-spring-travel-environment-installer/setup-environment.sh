@@ -52,15 +52,15 @@ echo ""                                                  >> environment.source
 echo "#"                                                 >> environment.source
 echo "# Aliases"                                         >> environment.source
 echo "#"                                                 >> environment.source
-echo 'alias run-hsqldb-server="cd $HSQLDB_HOME/data ' \
+echo 'alias run-hsqldb-server="pushd $HSQLDB_HOME/data ' \
      '&& java -classpath ../lib/hsqldb.jar ' \
-     'org.hsqldb.server.Server"'                         >> environment.source
-echo 'alias run-hsqldb-webserver="cd $HSQLDB_HOME/data '\
+     'org.hsqldb.server.Server ; popd"'                  >> environment.source
+echo 'alias run-hsqldb-webserver="pushd $HSQLDB_HOME/data '\
      '&& java -classpath ../lib/hsqldb.jar ' \
-     'org.hsqldb.server.WebServer"'                      >> environment.source
-echo 'alias run-hsqldb-manager="cd $HSQLDB_HOME/data ' \
+     'org.hsqldb.server.WebServer ; popd"'               >> environment.source
+echo 'alias run-hsqldb-manager="pushd $HSQLDB_HOME/data ' \
      '&& java -classpath ../lib/hsqldb.jar ' \
-     'org.hsqldb.util.DatabaseManager"'                  >> environment.source
+     'org.hsqldb.util.DatabaseManager ; popd"'           >> environment.source
 echo ""                                                  >> environment.source
 echo "Ok"
 echo ""
@@ -76,8 +76,10 @@ echo ""
 echo "To start HSQLDB server, use the command 'run-hsqldb-server --database.0 xebia-spring-travel --dbname.0 booking'"
 echo "To start HSQLDB manager, use the command 'run-hsqldb-manager'"
 echo ""
-echo "To start Tomcat server, use the command 'startup.sh'"
-echo "Don't forget to set the CATALINA_OPTS environment variable with \"export CATALINA_OPTS='-Xms256M -Xmx1G'\""
+echo "You may use another database (such as MySQL) to run the application."
+echo "In this case, don't forget to explicitely create a user with the following statements :"
+echo "  create user 'spring'@'localhost' identified by 'travel';"
+echo "  grant all privileges on spring_travel.* to 'spring'@'localhost';"
 echo ""
 
 

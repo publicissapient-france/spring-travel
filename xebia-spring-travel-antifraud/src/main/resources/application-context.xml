@@ -10,6 +10,13 @@
         http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
         ">
 
+    <!-- Load properties required for initialization Spring beans. See @Value fields in PaymentConfiguration. -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+       <property name="location" value="classpath:antifraud.properties" />
+       <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+    </bean>
+
+
    <!-- JMX -->
    <management:servlet-context-aware-mbean-server id="mbeanServer" />
    <context:mbean-export server="mbeanServer" />
@@ -39,7 +46,11 @@
       <property name="bus" ref="cxf" />
    </bean>
 
-   <bean id="antiFraudServiceImpl" class="fr.xebia.ws.travel.antifraud.v1_0.AntiFraudServiceImpl" />
+   <bean id="antiFraudServiceImpl" class="fr.xebia.ws.travel.antifraud.v1_0.AntiFraudServiceImpl" >
+          <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+   </bean>
    <jaxws:endpoint id="antiFraudService" implementor="#antiFraudServiceImpl" address="/1.0/antiFraudService" endpointName="se:antiFraudServiceSOAP"
       serviceName="se:antiFraudService" xmlns:se="http://www.xebia.fr/xebia-spring-travel-antifraud/webservice">
       <jaxws:features>

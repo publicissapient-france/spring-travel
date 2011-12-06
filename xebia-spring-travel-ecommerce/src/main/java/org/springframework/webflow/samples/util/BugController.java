@@ -19,8 +19,18 @@ public class BugController {
 	private DatabaseCacheAspect databaseCacheAspect;
 	@Autowired
 	private BookingService bookingService;
+	@Autowired
+	private CacheFilter cacheFilter;
 	
 	
+
+	public CacheFilter getCacheFilter() {
+		return cacheFilter;
+	}
+
+	public void setCacheFilter(CacheFilter cacheFilter) {
+		this.cacheFilter = cacheFilter;
+	}
 
 	public BookingActionController getBookingAction() {
 		return bookingAction;
@@ -82,6 +92,12 @@ public class BugController {
     @ManagedOperation
     public void disableBug5(int securityCode) {
         if (securityCode == 3614)
-            this.bookingService.setEnabledBookings(false);
+            this.bookingService.setEnabledHotels(false);
+    }
+    
+    @ManagedOperation
+    public void disableBug6(int securityCode) {
+        if (securityCode == 806)
+            this.cacheFilter.setEnabled(false);
     }
 }

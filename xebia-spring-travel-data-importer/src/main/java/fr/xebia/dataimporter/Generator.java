@@ -1,5 +1,9 @@
 package fr.xebia.dataimporter;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -8,10 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Generator {
 
@@ -92,8 +92,8 @@ public class Generator {
             final String lastname = "lastname-" + countOn6Digits;
             final String mail = firstname + '-' + lastname + "@springtravel.com";
 
-            final String customerStatement = "insert into Customer (username, first, last, email) " +
-                    "values ('%s', '%s', '%s', '%s');";
+            final String customerStatement = "insert into Customer (username, first, last, email, password) " +
+                    "values ('%s', '%s', '%s', '%s', '417c7382b16c395bc25b5da1398cf076');";
             final String currentUserStatement = String.format(customerStatement,
                     username,
                     firstname,
@@ -207,41 +207,41 @@ public class Generator {
 
     public void generateAuthoritiesFromTo(int from, int to) throws SQLException {
         LOG.info("Generating authorities...");
- /*
-        LOG.debug("Deleting every authority");
-        statement.executeUpdate("DELETE FROM authorities");
+        /*
+       LOG.debug("Deleting every authority");
+       statement.executeUpdate("DELETE FROM authorities");
 
-        LOG.debug("Generating the default authorities");
-        statement.executeUpdate("insert into authorities (username, authority) values ('erwin', 'ROLE_USER')");
-        statement.executeUpdate("insert into authorities (username, authority) values ('jeremy', 'ROLE_USER')");
-        statement.executeUpdate("insert into authorities (username, authority) values ('keith', 'ROLE_USER')");
-        statement.executeUpdate("insert into authorities (username, authority) values ('scott', 'ROLE_USER')");
+       LOG.debug("Generating the default authorities");
+       statement.executeUpdate("insert into authorities (username, authority) values ('erwin', 'ROLE_USER')");
+       statement.executeUpdate("insert into authorities (username, authority) values ('jeremy', 'ROLE_USER')");
+       statement.executeUpdate("insert into authorities (username, authority) values ('keith', 'ROLE_USER')");
+       statement.executeUpdate("insert into authorities (username, authority) values ('scott', 'ROLE_USER')");
 
-        LOG.debug("Generating {} authorities", (to - from));
-        for (int count = from; count < to; count++) {
-            final String countOn6Digits = String.format("%06d", count);
-            final String username = "user-" + countOn6Digits;
+       LOG.debug("Generating {} authorities", (to - from));
+       for (int count = from; count < to; count++) {
+           final String countOn6Digits = String.format("%06d", count);
+           final String username = "user-" + countOn6Digits;
 
-            final String authoritiesStatement = "insert into authorities (username, authority) " +
-                    "values ('%s', '%s');";
-            final String currentAuthorityStatement = String.format(authoritiesStatement,
-                    username,
-                    "ROLE_USER"
-            );
+           final String authoritiesStatement = "insert into authorities (username, authority) " +
+                   "values ('%s', '%s');";
+           final String currentAuthorityStatement = String.format(authoritiesStatement,
+                   username,
+                   "ROLE_USER"
+           );
 
-            statement.executeUpdate(currentAuthorityStatement);
+           statement.executeUpdate(currentAuthorityStatement);
 
-            if (count % 100 == 0) {
-                statement.clearBatch();
-                statement.clearWarnings();
-            }
-        }
-        LOG.debug("Done."); */
+           if (count % 100 == 0) {
+               statement.clearBatch();
+               statement.clearWarnings();
+           }
+       }
+       LOG.debug("Done."); */
     }
 
 
     private void createTables() throws SQLException {
-        SchemasExecutor executor = new SchemasExecutor(statement, Generator.class.getResourceAsStream("/"+db+".sql"));
+        SchemasExecutor executor = new SchemasExecutor(statement, Generator.class.getResourceAsStream("/" + db + ".sql"));
         executor.execute();
     }
 
@@ -255,9 +255,9 @@ public class Generator {
                 LOG.error("Invalid number argument : a number is expected");
             }
 
-            if (args.length >= 2){
+            if (args.length >= 2) {
                 db = args[1];
-                if (!db.equals("hsql") && ! db.equals("mysql")){
+                if (!db.equals("hsql") && !db.equals("mysql")) {
                     LOG.error("Database should be hsql or mysql\nUsage: Generator <number of entries> [mysql/hsql]");
                 }
             }
@@ -272,7 +272,7 @@ public class Generator {
         try {
 
             Properties properties = new Properties();
-            properties.load(Generator.class.getResourceAsStream("/"+db+".properties"));
+            properties.load(Generator.class.getResourceAsStream("/" + db + ".properties"));
             connection = DriverManager.getConnection(properties.getProperty("jdbc.url"),
                     properties.getProperty("jdbc.name", ""), properties.getProperty("jdbc.password", ""));
             statement = connection.createStatement();

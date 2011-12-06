@@ -15,29 +15,25 @@
  */
 package fr.xebia.ws.travel.antifraud.v1_0;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import java.io.StringWriter;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Random;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
+import fr.xebia.management.statistics.Profiled;
+import fr.xebia.monitoring.demo.Monitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.CompactWriter;
-
-import fr.xebia.management.statistics.Profiled;
-import fr.xebia.monitoring.demo.Monitoring;
 
 @ManagedResource
 public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
@@ -57,6 +53,10 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 	private int suspiciousBookingRatioInPercent = 0;
 
 	private XStream xstream = new XStream();
+
+    private String jdbcUrl = "jdbc.url=jdbc:hsqldb:mem:aname";
+    private String user = "SA";
+    private String password = "";
 
 	@Profiled(slowInvocationThresholdInMillis = 1000, verySlowInvocationThresholdInMillis = 2000)
 	@Override
@@ -91,19 +91,9 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 			e1.printStackTrace();
 		}
 		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://xebiaspringtravel.cccb4ickfoh9.eu-west-1.rds.amazonaws.com:3306/xebiaspringtravel");
+			Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
-			resultSet.close();
-			statement.close();
-			connection.close();
-		} catch (Exception e) {
-			return false;
-		} 
-		try {
-			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/fraud", "SA", "");
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECTE 1 FROM DUAL");
+			ResultSet resultSet = statement.executeQuery("SELECT 1 FROM fraud");
 			resultSet.close();
 			statement.close();
 			connection.close();
@@ -189,4 +179,16 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 		xstream.marshal(o, new CompactWriter(writer));
 		return writer.toString();
 	}
+
+    public void setJdbcUrl(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

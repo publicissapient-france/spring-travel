@@ -20,7 +20,7 @@
       <property name="jpaVendorAdapter">
          <bean class="fr.xebia.springframework.orm.jpa.vendor.XHibernateJpaVendorAdapter">
             <property name="database" value="${jpa.database}" />
-            <property name="showSql" value="true"/>
+            <property name="showSql" value="false"/>
             <property name="hbm2ddlAuto" value="${jpa.hbm2ddlAuto}"/>
          </bean>
       </property>
