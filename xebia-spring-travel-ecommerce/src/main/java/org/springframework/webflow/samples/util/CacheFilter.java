@@ -24,9 +24,26 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
+
+@ManagedResource("travel-ecommerce:type=BugController")
 public class CacheFilter implements Filter {
 
 	private boolean isEnabled = true;
+
+	private int cacheHit = 0;
+	private int cacheMiss = 0;
+
+	@ManagedOperation
+	public int getCacheHit() {
+		return cacheHit;
+	}
+
+	@ManagedOperation
+	public int getCacheMiss() {
+		return cacheMiss;
+	}
 
 	public void setEnabled(boolean enabled) {
 		isEnabled = enabled;
@@ -177,8 +194,11 @@ public class CacheFilter implements Filter {
 			path += request.getRequestURI() + request.getQueryString();
 			CacheEntry cacheEntry = cache.get(path);
 			if (cacheEntry != null) {
+				cacheHit++;
 				response.setContentType(cacheEntry.t);
+
 			} else {
+				cacheMiss++;
 				// Else, fetch it
 				cacheEntry = new CacheEntry();
 				CacheResponseWrapper wrapper = new CacheResponseWrapper(
@@ -199,6 +219,7 @@ public class CacheFilter implements Filter {
 
 			response.setContentType(cacheEntry.t);
 			response.getOutputStream().write(cacheEntry.c.toByteArray());
+
 		} else {
 			chain.doFilter(request, response);
 		}
