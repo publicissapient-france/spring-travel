@@ -183,6 +183,12 @@
             <artifactId>groovy-all</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

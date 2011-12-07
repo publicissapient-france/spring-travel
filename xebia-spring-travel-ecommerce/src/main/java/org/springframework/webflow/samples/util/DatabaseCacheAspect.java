@@ -1,6 +1,7 @@
 package org.springframework.webflow.samples.util;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,10 +14,10 @@ import org.springframework.webflow.samples.booking.SearchCriteria;
 @Aspect
 public class DatabaseCacheAspect {
 
-	private boolean isEnabled = true;
+	private AtomicBoolean isEnabled = new AtomicBoolean(true);
 
-	public void setEnabled(boolean enabled) {
-		isEnabled = enabled;
+	public void disable() {
+		isEnabled.set(false);
 	}
 
 	@SuppressWarnings("unused")
@@ -37,7 +38,7 @@ public class DatabaseCacheAspect {
 	@Around("execution(* org.springframework.webflow.samples.booking.JpaBookingService.findHotels(org.springframework.webflow.samples.booking.SearchCriteria)) && args(criteria)")
 	public List<Hotel> cacheHotelList(ProceedingJoinPoint joinPoint,
 			SearchCriteria criteria) {
-		if (isEnabled) {
+		if (isEnabled.get()) {
 			if (hotelCache.get(criteria) != null) {
 				return hotelCache.get(criteria);
 			}

@@ -67,37 +67,37 @@ public class BugController {
 	@ManagedOperation
 	public void disableBug1(int securityCode) {
 		if (securityCode == 421)
-			this.bookingAction.setEnabled(false);
+			this.bookingAction.disable();
 	}
 
 	@ManagedOperation
 	public void disableBug2(int securityCode) {
 		if (securityCode == 666)
-			this.jpaLogger.setEnabled(false);
+			this.jpaLogger.disable();
 	}
 	
 	@ManagedOperation
 	public void disableBug3(int securityCode) {
 		if (securityCode == 314)
-			this.databaseCacheAspect.setEnabled(false);
+			this.databaseCacheAspect.disable();
 	}
 	
 	@ManagedOperation
 	public void disableBug4(int securityCode) {
 		if (securityCode == 3615)
-			this.bookingService.setEnabledBookings(false);
+			this.bookingService.disableBookings();
     }
 
 
     @ManagedOperation
     public void disableBug5(int securityCode) {
         if (securityCode == 3614)
-            this.bookingService.setEnabledHotels(false);
+            this.bookingService.disableHotels();
     }
     
     @ManagedOperation
     public void disableBug6(int securityCode) {
         if (securityCode == 806)
-            this.cacheFilter.setEnabled(false);
+            this.cacheFilter.disable();
     }
 }

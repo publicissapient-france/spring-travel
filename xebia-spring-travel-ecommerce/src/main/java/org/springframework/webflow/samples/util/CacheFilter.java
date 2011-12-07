@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,7 +31,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 @ManagedResource("travel-ecommerce:type=CacheFilter")
 public class CacheFilter implements Filter {
 
-	private boolean isEnabled = true;
+	private AtomicBoolean isEnabled = new AtomicBoolean(true);
 
 	private int cacheHit = 0;
 	private int cacheMiss = 0;
@@ -45,17 +46,17 @@ public class CacheFilter implements Filter {
 		return cacheMiss;
 	}
 
-	public void setEnabled(boolean enabled) {
-		isEnabled = enabled;
+	public void disable() {
+		isEnabled.set(false);
 	}
 
 	public boolean isEnabled() {
-		return isEnabled;
+		return isEnabled.get();
 	}
 
 	public class CacheResponseWrapper extends HttpServletResponseWrapper {
 
-		public static final int BUFFER_SIZE = 250;
+		public static final int BUFFER_SIZE = 100;
 
 		protected HttpServletResponse origResponse = null;
 		protected ServletOutputStream stream = null;
@@ -100,6 +101,8 @@ public class CacheFilter implements Filter {
 		public InputStream getContentAsInputStream() {
 			return new ByteArrayInputStream(this.cache.toByteArray());
 		}
+
+
 	}
 
 	public class CacheResponseStream extends ServletOutputStream {
@@ -164,7 +167,9 @@ public class CacheFilter implements Filter {
 		String timeout = config.getInitParameter("cacheTimeout");
 		if (timeout != null) {
 			cacheTimeout = 60 * 1000 * Long.parseLong(timeout);
-		}
+		}else {
+            cacheTimeout = 10;
+        }
 		this.context = filterConfig.getServletContext();
 		context.log("Initializing cache filter");
 	}
@@ -175,7 +180,7 @@ public class CacheFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 
-		if (this.isEnabled) {
+		if (this.isEnabled.get()) {
 
 			HttpSession session = request.getSession();
 			@SuppressWarnings("unchecked")
@@ -191,9 +196,9 @@ public class CacheFilter implements Filter {
 			if (context != null) {
 				path += context.getRealPath("");
 			}
-			path += request.getRequestURI() + request.getQueryString();
+			path += request.getMethod()+ ":" +request.getRequestURI() + request.getQueryString();
 			CacheEntry cacheEntry = cache.get(path);
-			if (cacheEntry != null) {
+			if (cacheEntry != null && cacheEntry.timestamp + cacheTimeout < System.currentTimeMillis() ) {
 				cacheHit++;
 				response.setContentType(cacheEntry.t);
 
@@ -201,6 +206,7 @@ public class CacheFilter implements Filter {
 				cacheMiss++;
 				// Else, fetch it
 				cacheEntry = new CacheEntry();
+                cacheEntry.timestamp = System.currentTimeMillis();
 				CacheResponseWrapper wrapper = new CacheResponseWrapper(
 						response);
 				chain.doFilter(request, wrapper);
@@ -208,13 +214,16 @@ public class CacheFilter implements Filter {
 				byte[] buf = cacheEntry.buf;
 				InputStream in = wrapper.getContentAsInputStream();
 				OutputStream out = cacheEntry.c;
-				int length;
+				int length; boolean hasBody = false;
 				while ((length = in.read(buf)) >= 0) {
 					out.write(buf, 0, length);
+                    hasBody = true;
 				}
 
 				cacheEntry.t = wrapper.getContentType();
-				cache.put(path, cacheEntry);
+                if (hasBody){
+				    cache.put(path, cacheEntry);
+                }
 			}
 
 			response.setContentType(cacheEntry.t);
@@ -232,9 +241,10 @@ public class CacheFilter implements Filter {
 
 	private class CacheEntry implements Serializable {
 		private static final long serialVersionUID = 1L;
-		public byte[] buf = new byte[(CacheResponseWrapper.BUFFER_SIZE << 10)];
+		public byte[] buf = new byte[(CacheResponseWrapper.BUFFER_SIZE )];
 		public ByteArrayOutputStream c = new ByteArrayOutputStream();
 		public String t = "text/html";
+        public long timestamp;
 	}
 
 }

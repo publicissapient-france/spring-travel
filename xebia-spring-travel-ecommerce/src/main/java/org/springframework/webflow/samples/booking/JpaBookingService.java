@@ -2,6 +2,7 @@ package org.springframework.webflow.samples.booking;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,16 +22,16 @@ import org.springframework.util.StringUtils;
 public class JpaBookingService implements BookingService {
 
     private EntityManager em;
-	private boolean isEnabledBookings =true;
+	private AtomicBoolean isEnabledBookings = new AtomicBoolean(true);
 
-    private boolean isEnabledHotels = true;
+    private AtomicBoolean isEnabledHotels = new AtomicBoolean(true);
 
-    public void setEnabledHotels(boolean enabledHotels) {
-        isEnabledHotels = enabledHotels;
+    public void disableHotels() {
+        isEnabledHotels.set(false);
     }
 
-    public void setEnabledBookings(boolean isEnabled) {
-		this.isEnabledBookings = isEnabled;
+    public void disableBookings() {
+		this.isEnabledBookings.set(false);
 	}
 
 	@PersistenceContext
@@ -42,7 +43,7 @@ public class JpaBookingService implements BookingService {
     @SuppressWarnings("unchecked")
     public List<Booking> findBookings(String username) {
 	if (username != null) {
-			if (isEnabledBookings){
+			if (isEnabledBookings.get()){
 	    return em.createQuery("select distinct b from Booking b left join fetch b.hotel f left join fetch f.bookings where b.user.username = :username order by b.checkinDate")
 		    .setParameter("username", username).getResultList();}
 		else {
@@ -58,7 +59,7 @@ public class JpaBookingService implements BookingService {
     @SuppressWarnings("unchecked")
     public List<Hotel> findHotels(SearchCriteria criteria) {
 	    String pattern = getSearchPattern(criteria);
-        if (isEnabledHotels){
+        if (isEnabledHotels.get()){
              List<Hotel> hotels = em.createQuery("select h from Hotel h where lower(h.name) like " + pattern + " or lower(h.city) like " + pattern
 			    + " or lower(h.zip) like " + pattern + " or lower(h.address) like " + pattern).getResultList();
             List<Hotel> res = new ArrayList<Hotel>();

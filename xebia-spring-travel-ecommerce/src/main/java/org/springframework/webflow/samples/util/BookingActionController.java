@@ -2,17 +2,19 @@ package org.springframework.webflow.samples.util;
 
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Component
 public class BookingActionController {
 
-	private boolean isEnabled = true;
+	private AtomicBoolean isEnabled = new AtomicBoolean(true);
 
-	public void setEnabled(boolean b) {
-		this.isEnabled = b;
+	public void disable() {
+		this.isEnabled.set(false);
 	}
 
 	public boolean isEnabled() {
-		return isEnabled;
+		return isEnabled.get();
 	}
 
 }

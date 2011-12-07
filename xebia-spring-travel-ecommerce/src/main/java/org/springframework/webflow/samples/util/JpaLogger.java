@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -16,15 +17,15 @@ public class JpaLogger {
 	private final Logger LOGGER = LoggerFactory
 			.getLogger("org.springframework.webflow.samples.util.JpaLogger");
 
-	private boolean isEnabled = true;
+	private AtomicBoolean isEnabled = new AtomicBoolean(true);
 
-	public void setEnabled(boolean isEnabled) {
-			this.isEnabled=isEnabled;
+	public void disable() {
+			this.isEnabled.set(false);
 	}
 
-	@AfterReturning(pointcut = "execution(* org.springframework.webflow.samples.booking.JpaBookingService.findHotels(..))", returning = "obj")
+	@AfterReturning(pointcut = "execution(* org.springframework.webflow.samples.booking.JpaBookingService.find*(..))", returning = "obj")
 	public void logReturnedObject(Object obj) {
-		if (isEnabled) {
+		if (isEnabled.get()) {
 			if (obj instanceof List) {
 				List list = (List) obj;
 				for (Object resultObject : list) {
@@ -48,22 +49,22 @@ public class JpaLogger {
 	private void logMethods(Method[] m, Object o) {
 		Class[] params = null;
 		for (int i = 0; i < m.length; ++i) {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(Modifier.toString(m[i].getModifiers()));
-			buffer.append(" ");
-			buffer.append(m[i].getReturnType().getName());
-			buffer.append(" ");
-			buffer.append(m[i].getName());
-			buffer.append("(");
+            String res ="";
+			res +=(Modifier.toString(m[i].getModifiers()));
+			res +=(" ");
+			res +=(m[i].getReturnType().getName());
+			res +=(" ");
+			res +=(m[i].getName());
+			res +=("(");
 			params = m[i].getParameterTypes();
 			for (int j = 0; j < params.length; ++j) {
-				buffer.append(params[j].getName());
+				res +=(params[j].getName());
 			}
-			buffer.append(")");
+			res +=(")");
 			if (m[i].getName().startsWith("get")) {
-				buffer.append(" - value =");
+				res +=(" - value =");
 				try {
-					buffer.append(m[i].invoke(o, new Object[] {}));
+					res +=(m[i].invoke(o, new Object[] {}));
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
@@ -72,7 +73,7 @@ public class JpaLogger {
 					e.printStackTrace();
 				}
 			}
-			LOGGER.warn(buffer.toString());
+			LOGGER.warn(res);
 		}
 	}
 
