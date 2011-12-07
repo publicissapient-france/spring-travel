@@ -35,6 +35,20 @@ else
 fi
 echo ""
 
+#
+# 3 - Install JMeter
+#
+echo "Extracting JMeter..."
+unzip -q jakarta-jmeter-2.5.1.zip
+if [ $? == 0 ]
+then
+  chmod 755 jakarta-jmeter-2.5.1/bin/*.sh
+  echo "OK"
+else
+  echo "KO"
+  exit 1
+fi
+echo ""
 
 #
 # Generate the environment variables
@@ -81,5 +95,6 @@ echo "In this case, don't forget to explicitely create a user with the following
 echo "  create user 'spring'@'localhost' identified by 'travel';"
 echo "  grant all privileges on spring_travel.* to 'spring'@'localhost';"
 echo ""
-
+echo "Files to be used by JMeter are located in jakarta-jmeter-2.5.1/data"
+echo ""
 
