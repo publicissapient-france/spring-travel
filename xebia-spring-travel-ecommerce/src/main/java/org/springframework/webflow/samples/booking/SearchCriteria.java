@@ -17,7 +17,7 @@ public class SearchCriteria implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private long timeOfSearch = Calendar.getInstance().getTime().getTime();
+    private long timeOfSearch = System.nanoTime();
     
     public long getTimeOfSearch() {
 		return timeOfSearch;

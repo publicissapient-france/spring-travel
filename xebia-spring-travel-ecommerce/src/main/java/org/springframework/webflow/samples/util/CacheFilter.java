@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,17 +34,17 @@ public class CacheFilter implements Filter {
 
 	private AtomicBoolean isEnabled = new AtomicBoolean(true);
 
-	private int cacheHit = 0;
-	private int cacheMiss = 0;
+	private AtomicInteger cacheHit = new AtomicInteger(0);
+	private AtomicInteger cacheMiss = new AtomicInteger(0);
 
 	@ManagedOperation
 	public int getCacheHit() {
-		return cacheHit;
+		return cacheHit.get();
 	}
 
 	@ManagedOperation
 	public int getCacheMiss() {
-		return cacheMiss;
+		return cacheMiss.get();
 	}
 
 	public void disable() {
@@ -198,12 +199,12 @@ public class CacheFilter implements Filter {
 			}
 			path += request.getMethod()+ ":" +request.getRequestURI() + request.getQueryString();
 			CacheEntry cacheEntry = cache.get(path);
-			if (cacheEntry != null && cacheEntry.timestamp + cacheTimeout < System.currentTimeMillis() ) {
-				cacheHit++;
+			if (cacheEntry != null && cacheEntry.timestamp + cacheTimeout > System.currentTimeMillis() ) {
+				cacheHit.incrementAndGet();
 				response.setContentType(cacheEntry.t);
 
 			} else {
-				cacheMiss++;
+				cacheMiss.incrementAndGet();
 				// Else, fetch it
 				cacheEntry = new CacheEntry();
                 cacheEntry.timestamp = System.currentTimeMillis();
@@ -225,14 +226,11 @@ public class CacheFilter implements Filter {
 				    cache.put(path, cacheEntry);
                 }
 			}
-
 			response.setContentType(cacheEntry.t);
 			response.getOutputStream().write(cacheEntry.c.toByteArray());
-
 		} else {
 			chain.doFilter(request, response);
 		}
-
 	}
 
 	public void destroy() {

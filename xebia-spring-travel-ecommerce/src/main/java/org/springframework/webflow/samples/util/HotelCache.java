@@ -13,7 +13,7 @@ import org.springframework.webflow.samples.booking.SearchCriteria;
 public class HotelCache {
 	
 	@SuppressWarnings("unchecked")
-	private final static Map<SearchCriteria, List<Hotel>> HOTEL_CACHE = new LRUMap(1000);
+	private final static Map<SearchCriteria, List<Hotel>> HOTEL_CACHE = new LRUMap(10000);
 
 	@ManagedOperation
 	public static int getCacheHit() {
