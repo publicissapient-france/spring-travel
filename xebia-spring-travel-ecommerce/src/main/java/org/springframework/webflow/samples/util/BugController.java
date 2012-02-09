@@ -11,93 +11,110 @@ import org.springframework.webflow.samples.booking.BookingService;
 @Component
 public class BugController {
 
-	@Autowired
-	private BookingActionController bookingAction;
-	@Autowired
-	private JpaLogger jpaLogger;
-	@Autowired
-	private DatabaseCacheAspect databaseCacheAspect;
-	@Autowired
-	private BookingService bookingService;
-	@Autowired
-	private CacheFilter cacheFilter;
-	
-	
+    @Autowired
+    private BookingActionController bookingAction;
+    @Autowired
+    private JpaLogger jpaLogger;
+    @Autowired
+    private DatabaseCacheAspect databaseCacheAspect;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private CacheFilter cacheFilter;
 
-	public CacheFilter getCacheFilter() {
-		return cacheFilter;
-	}
 
-	public void setCacheFilter(CacheFilter cacheFilter) {
-		this.cacheFilter = cacheFilter;
-	}
+    public CacheFilter getCacheFilter() {
+        return cacheFilter;
+    }
 
-	public BookingActionController getBookingAction() {
-		return bookingAction;
-	}
+    public void setCacheFilter(CacheFilter cacheFilter) {
+        this.cacheFilter = cacheFilter;
+    }
 
-	public void setBookingAction(BookingActionController bookingAction) {
-		this.bookingAction = bookingAction;
-	}
+    public BookingActionController getBookingAction() {
+        return bookingAction;
+    }
 
-	public JpaLogger getJpaLogger() {
-		return jpaLogger;
-	}
+    public void setBookingAction(BookingActionController bookingAction) {
+        this.bookingAction = bookingAction;
+    }
 
-	public void setJpaLogger(JpaLogger jpaLogger) {
-		this.jpaLogger = jpaLogger;
-	}
+    public JpaLogger getJpaLogger() {
+        return jpaLogger;
+    }
 
-	public DatabaseCacheAspect getDatabaseCacheAspect() {
-		return databaseCacheAspect;
-	}
+    public void setJpaLogger(JpaLogger jpaLogger) {
+        this.jpaLogger = jpaLogger;
+    }
 
-	public void setDatabaseCacheAspect(DatabaseCacheAspect databaseCacheAspect) {
-		this.databaseCacheAspect = databaseCacheAspect;
-	}
+    public DatabaseCacheAspect getDatabaseCacheAspect() {
+        return databaseCacheAspect;
+    }
 
-	public BookingService getBookingService() {
-		return bookingService;
-	}
+    public void setDatabaseCacheAspect(DatabaseCacheAspect databaseCacheAspect) {
+        this.databaseCacheAspect = databaseCacheAspect;
+    }
 
-	public void setBookingService(BookingService bookingService) {
-		this.bookingService = bookingService;
-	}
+    public BookingService getBookingService() {
+        return bookingService;
+    }
 
-	@ManagedOperation
-	public void disableBug1(int securityCode) {
-		if (securityCode == 421)
-			this.bookingAction.disable();
-	}
+    public void setBookingService(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
 
-	@ManagedOperation
-	public void disableBug2(int securityCode) {
-		if (securityCode == 666)
-			this.jpaLogger.disable();
-	}
-	
-	@ManagedOperation
-	public void disableBug3(int securityCode) {
-		if (securityCode == 314)
-			this.databaseCacheAspect.disable();
-	}
-	
-	@ManagedOperation
-	public void disableBug4(int securityCode) {
-		if (securityCode == 3615)
-			this.bookingService.disableBookings();
+    @ManagedOperation
+    public String disableBug1(int securityCode) {
+        if (securityCode == 421) {
+            this.bookingAction.disable();
+            return "Bug 1 is now disabled";
+        }
+        return "Don't think you are, know you are.";
+    }
+
+    @ManagedOperation
+    public String disableBug2(int securityCode) {
+        if (securityCode == 666) {
+            this.jpaLogger.disable();
+            return "Bug 2 is now disabled";
+        }
+        return "Men are like steel. When they lose their temper, they lose their worth.";
+    }
+
+    @ManagedOperation
+    public String disableBug3(int securityCode) {
+        if (securityCode == 314) {
+            this.databaseCacheAspect.disable();
+            return "Bug 3 is now disabled";
+        }
+        return "Genius is one percent inspiration and ninety-nine percent perspiration.";
+    }
+
+    @ManagedOperation
+    public String disableBug4(int securityCode) {
+        if (securityCode == 3615) {
+            this.bookingService.disableBookings();
+            return "Bug 4 is now disabled";
+        }
+        return "Keep your fears to yourself, but share your inspiration with others.";
     }
 
 
     @ManagedOperation
-    public void disableBug5(int securityCode) {
-        if (securityCode == 3614)
+    public String disableBug5(int securityCode) {
+        if (securityCode == 3614) {
             this.bookingService.disableHotels();
+            return "Bug 5 is now disabled";
+        }
+        return "The real excitement is playing the game.";
     }
-    
+
     @ManagedOperation
-    public void disableBug6(int securityCode) {
-        if (securityCode == 806)
+    public String disableBug6(int securityCode) {
+        if (securityCode == 806) {
             this.cacheFilter.disable();
+            return "Bug 6 is now disabled";
+        }
+        return "Envy can be a positive motivator. Let it inspire you to work harder for what you want.";
     }
 }
