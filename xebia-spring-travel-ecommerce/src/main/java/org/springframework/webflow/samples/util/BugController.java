@@ -93,7 +93,7 @@ public class BugController {
     @ManagedOperation
     public String disableBug4(int securityCode) {
         if (securityCode == 3615) {
-            this.bookingService.disableBookings();
+            this.bookingService.disableBookingsBug();
             return "Bug 4 is now disabled";
         }
         return "Keep your fears to yourself, but share your inspiration with others.";
@@ -103,7 +103,7 @@ public class BugController {
     @ManagedOperation
     public String disableBug5(int securityCode) {
         if (securityCode == 3614) {
-            this.bookingService.disableHotels();
+            this.bookingService.disableHotelsBug();
             return "Bug 5 is now disabled";
         }
         return "The real excitement is playing the game.";
@@ -116,5 +116,14 @@ public class BugController {
             return "Bug 6 is now disabled";
         }
         return "Envy can be a positive motivator. Let it inspire you to work harder for what you want.";
+    }
+
+    @ManagedOperation
+    public String disableBug7(int securityCode) {
+        if (securityCode == 1337) {
+            this.bookingService.disableLeak();
+            return "Bug 7 is now disabled";
+        }
+        return "An expert is a person who has made all the mistakes that can be made in a very narrow field.";
     }
 }

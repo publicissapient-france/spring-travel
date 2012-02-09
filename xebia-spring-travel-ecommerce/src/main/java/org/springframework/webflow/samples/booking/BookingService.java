@@ -43,8 +43,10 @@ public interface BookingService {
      */
     public void cancelBooking(Long id);
 
-	public void disableBookings();
+	public void disableBookingsBug();
 
-    void disableHotels();
+    public void disableHotelsBug();
+
+    public void disableLeak();
 
 }

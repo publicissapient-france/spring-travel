@@ -21,15 +21,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JpaBookingService implements BookingService {
 
     private EntityManager em;
+
     private AtomicBoolean isBookingsBugEnabled = new AtomicBoolean(true);
+
+    private AtomicBoolean isLeakEnabled = new AtomicBoolean(true);
 
     private AtomicBoolean isHotelsBugEnabled = new AtomicBoolean(true);
 
-    public void disableHotels() {
+    private List<String> leakingList = new ArrayList<String>();
+
+    public void disableHotelsBug() {
         isHotelsBugEnabled.set(false);
     }
 
-    public void disableBookings() {
+    @Override
+    public void disableLeak() {
+        this.isLeakEnabled.set(false);
+    }
+
+    public void disableBookingsBug() {
         this.isBookingsBugEnabled.set(false);
     }
 
@@ -65,29 +75,34 @@ public class JpaBookingService implements BookingService {
                 " or lower(h.city) like " + pattern +
                 " or lower(h.zip) like " + pattern +
                 " or lower(h.address) like " + pattern;
+        final List resultList;
 
         if (isHotelsBugEnabled.get()) {
             List<Hotel> hotels = em.createQuery(hqlQuery).getResultList();
-            List<Hotel> res = new ArrayList<Hotel>();
+            resultList = new ArrayList<Hotel>();
             int i = 0;
 
             for (Hotel h : hotels) {
                 if (i >= criteria.getPage() * criteria.getPageSize()) {
-                    res.add(h);
-                    if (res.size() == criteria.getPageSize()) {
+                    resultList.add(h);
+                    if (resultList.size() == criteria.getPageSize()) {
                         break;
                     }
                 }
                 i++;
             }
-
-            return res;
         } else {
-            return em.createQuery(hqlQuery)
+            resultList = em.createQuery(hqlQuery)
                     .setMaxResults(criteria.getPageSize())
                     .setFirstResult(criteria.getPage() * criteria.getPageSize())
                     .getResultList();
         }
+
+        if(isLeakEnabled.get()) {
+            leakingList.add("l33333333333333333333333333334k ! " + System.currentTimeMillis() + "-" + System.nanoTime());
+        }
+
+        return resultList;
     }
 
     @Transactional(readOnly = true)
