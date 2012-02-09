@@ -15,8 +15,8 @@
  */
 package fr.xebia.monitoring.demo.payment;
 
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -28,8 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
+import java.util.concurrent.TimeUnit;
 
 public class CreditCardServiceAuditingImpl implements CreditCardService {
 

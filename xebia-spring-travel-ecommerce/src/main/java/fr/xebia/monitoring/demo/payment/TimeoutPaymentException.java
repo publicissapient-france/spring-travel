@@ -15,10 +15,10 @@
  */
 package fr.xebia.monitoring.demo.payment;
 
-import java.net.SocketTimeoutException;
-
 import org.springframework.payment.core.PaymentTransaction;
 import org.springframework.payment.core.PaymentTransactionException;
+
+import java.net.SocketTimeoutException;
 
 public class TimeoutPaymentException extends PaymentTransactionException {
 

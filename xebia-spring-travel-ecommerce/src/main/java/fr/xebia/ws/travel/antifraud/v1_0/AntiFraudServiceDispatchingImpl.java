@@ -15,18 +15,16 @@
  */
 package fr.xebia.ws.travel.antifraud.v1_0;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
+import com.google.common.base.Objects;
+import fr.xebia.monitoring.demo.Monitoring;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Objects;
-
-import fr.xebia.monitoring.demo.Monitoring;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 @Component("AntiFraudService")
 @ManagedResource

@@ -32,7 +32,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 @ManagedResource("travel-ecommerce:type=CacheFilter")
 public class CacheFilter implements Filter {
 
-	private AtomicBoolean isEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
 
 	private AtomicInteger cacheHit = new AtomicInteger(0);
 	private AtomicInteger cacheMiss = new AtomicInteger(0);
@@ -48,11 +48,11 @@ public class CacheFilter implements Filter {
 	}
 
 	public void disable() {
-		isEnabled.set(false);
+		isBugEnabled.set(false);
 	}
 
-	public boolean isEnabled() {
-		return isEnabled.get();
+	public boolean getBugEnabled() {
+		return isBugEnabled.get();
 	}
 
 	public class CacheResponseWrapper extends HttpServletResponseWrapper {
@@ -181,12 +181,11 @@ public class CacheFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 
-		if (this.isEnabled.get()) {
+		if (this.isBugEnabled.get()) {
 
 			HttpSession session = request.getSession();
 			@SuppressWarnings("unchecked")
-			Map<String, CacheEntry> cache = (Map<String, CacheEntry>) session
-					.getAttribute("pages.cache");
+			Map<String, CacheEntry> cache = (Map<String, CacheEntry>) session.getAttribute("pages.cache");
 			if (cache == null) {
 				cache = new Hashtable<String, CacheEntry>();
 				session.setAttribute("pages.cache", cache);
@@ -208,8 +207,7 @@ public class CacheFilter implements Filter {
 				// Else, fetch it
 				cacheEntry = new CacheEntry();
                 cacheEntry.timestamp = System.currentTimeMillis();
-				CacheResponseWrapper wrapper = new CacheResponseWrapper(
-						response);
+				CacheResponseWrapper wrapper = new CacheResponseWrapper(response);
 				chain.doFilter(request, wrapper);
 
 				byte[] buf = cacheEntry.buf;

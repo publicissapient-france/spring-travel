@@ -7,14 +7,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 public class BookingActionController {
 
-	private AtomicBoolean isEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
 
 	public void disable() {
-		this.isEnabled.set(false);
+		this.isBugEnabled.set(false);
 	}
 
-	public boolean isEnabled() {
-		return isEnabled.get();
+	public boolean isBugEnabled() {
+		return isBugEnabled.get();
 	}
 
 }

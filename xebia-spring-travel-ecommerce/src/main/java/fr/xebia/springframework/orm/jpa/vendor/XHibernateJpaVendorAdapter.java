@@ -15,18 +15,18 @@
  */
 package fr.xebia.springframework.orm.jpa.vendor;
 
-import java.util.Map;
-
 import org.hibernate.cfg.Environment;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
 
 /**
  * Extension of {@link HibernateJpaVendorAdapter} to manually set
  * <tt>"hibernate.hbm2ddl.auto"</tt> (<tt>"update"</tt>, <tt>"create"</tt>,
  * <tt>"create-drop"</tt> or <tt>"validate"</tt>) when
  * {@link HibernateJpaVendorAdapter} only allows to use <tt>"update"</tt>.
- * 
+ *
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
 public class XHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
@@ -38,11 +38,9 @@ public class XHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
     }
 
     /**
-     * 
-     * @param hbm2ddlAuto
-     *            one of <tt>"update"</tt>, <tt>"create"</tt>,
-     *            <tt>"create-drop"</tt> or <tt>"validate"</tt> or
-     *            <code>null</code> / empty string.
+     * @param hbm2ddlAuto one of <tt>"update"</tt>, <tt>"create"</tt>,
+     *                    <tt>"create-drop"</tt> or <tt>"validate"</tt> or
+     *                    <code>null</code> / empty string.
      */
     public void setHbm2ddlAuto(String hbm2ddlAuto) {
         this.hbm2ddlAuto = hbm2ddlAuto;

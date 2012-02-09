@@ -17,15 +17,15 @@ public class JpaLogger {
 	private final Logger LOGGER = LoggerFactory
 			.getLogger("org.springframework.webflow.samples.util.JpaLogger");
 
-	private AtomicBoolean isEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
 
 	public void disable() {
-			this.isEnabled.set(false);
+			this.isBugEnabled.set(false);
 	}
 
 	@AfterReturning(pointcut = "execution(* org.springframework.webflow.samples.booking.JpaBookingService.find*(..))", returning = "obj")
 	public void logReturnedObject(Object obj) {
-		if (isEnabled.get()) {
+		if (isBugEnabled.get()) {
 			if (obj instanceof List) {
 				List list = (List) obj;
 				for (Object resultObject : list) {

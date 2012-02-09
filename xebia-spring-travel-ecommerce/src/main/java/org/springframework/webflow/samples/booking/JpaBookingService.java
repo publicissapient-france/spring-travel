@@ -1,16 +1,15 @@
 package org.springframework.webflow.samples.booking;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A JPA-based implementation of the Booking Service. Delegates to a JPA entity manager to issue data access calls
@@ -22,103 +21,112 @@ import org.springframework.util.StringUtils;
 public class JpaBookingService implements BookingService {
 
     private EntityManager em;
-	private AtomicBoolean isEnabledBookings = new AtomicBoolean(true);
+    private AtomicBoolean isBookingsBugEnabled = new AtomicBoolean(true);
 
-    private AtomicBoolean isEnabledHotels = new AtomicBoolean(true);
+    private AtomicBoolean isHotelsBugEnabled = new AtomicBoolean(true);
 
     public void disableHotels() {
-        isEnabledHotels.set(false);
+        isHotelsBugEnabled.set(false);
     }
 
     public void disableBookings() {
-		this.isEnabledBookings.set(false);
-	}
+        this.isBookingsBugEnabled.set(false);
+    }
 
-	@PersistenceContext
+    @PersistenceContext
     public void setEntityManager(EntityManager em) {
-	this.em = em;
+        this.em = em;
     }
 
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public List<Booking> findBookings(String username) {
-	if (username != null) {
-			if (isEnabledBookings.get()){
-	    return em.createQuery("select distinct b from Booking b left join fetch b.hotel f left join fetch f.bookings where b.user.username = :username order by b.checkinDate")
-		    .setParameter("username", username).getResultList();}
-		else {
-			return em.createQuery("select  b from Booking b where b.user.username = :username order by b.checkinDate")
-				    .setParameter("username", username).getResultList();
-		}
-	} else {
-	    return null;
-	}
+        if (username != null) {
+            final String hqlQuery;
+
+            if (isBookingsBugEnabled.get()) {
+                hqlQuery = "select distinct b from Booking b left join fetch b.hotel f left join fetch f.bookings where b.user.username = :username order by b.checkinDate";
+            } else {
+                hqlQuery = "select  b from Booking b where b.user.username = :username order by b.checkinDate";
+            }
+
+            return em.createQuery(hqlQuery).setParameter("username", username).getResultList();
+        } else {
+            return null;
+        }
     }
 
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public List<Hotel> findHotels(SearchCriteria criteria) {
-	    String pattern = getSearchPattern(criteria);
-        if (isEnabledHotels.get()){
-             List<Hotel> hotels = em.createQuery("select h from Hotel h where lower(h.name) like " + pattern + " or lower(h.city) like " + pattern
-			    + " or lower(h.zip) like " + pattern + " or lower(h.address) like " + pattern).getResultList();
+        final String pattern = getSearchPattern(criteria);
+        final String hqlQuery = "select h from Hotel h where " +
+                "lower(h.name) like " + pattern +
+                " or lower(h.city) like " + pattern +
+                " or lower(h.zip) like " + pattern +
+                " or lower(h.address) like " + pattern;
+
+        if (isHotelsBugEnabled.get()) {
+            List<Hotel> hotels = em.createQuery(hqlQuery).getResultList();
             List<Hotel> res = new ArrayList<Hotel>();
             int i = 0;
-            for (Hotel h : hotels){
-                if (i>= criteria.getPage() * criteria.getPageSize()){
+
+            for (Hotel h : hotels) {
+                if (i >= criteria.getPage() * criteria.getPageSize()) {
                     res.add(h);
-                    if (res.size() == criteria.getPageSize()){
+                    if (res.size() == criteria.getPageSize()) {
                         break;
                     }
                 }
                 i++;
             }
-            return res;
 
+            return res;
         } else {
-	    return em.createQuery(
-		    "select h from Hotel h where lower(h.name) like " + pattern + " or lower(h.city) like " + pattern
-			    + " or lower(h.zip) like " + pattern + " or lower(h.address) like " + pattern).setMaxResults(
-		    criteria.getPageSize()).setFirstResult(criteria.getPage() * criteria.getPageSize()).getResultList();
+            return em.createQuery(hqlQuery)
+                    .setMaxResults(criteria.getPageSize())
+                    .setFirstResult(criteria.getPage() * criteria.getPageSize())
+                    .getResultList();
         }
     }
 
     @Transactional(readOnly = true)
     public Hotel findHotelById(Long id) {
-	return em.find(Hotel.class, id);
+        return em.find(Hotel.class, id);
     }
 
     @Transactional(readOnly = true)
     public Booking createBooking(Long hotelId, String username) {
-	Hotel hotel = em.find(Hotel.class, hotelId);
-	User user = findUser(username);
-	Booking booking = new Booking(hotel, user);
-	em.persist(booking);
-	return booking;
+        Hotel hotel = em.find(Hotel.class, hotelId);
+        User user = findUser(username);
+        Booking booking = new Booking(hotel, user);
+        em.persist(booking);
+        return booking;
     }
 
     @Transactional
     public void cancelBooking(Long id) {
-	Booking booking = em.find(Booking.class, id);
-	if (booking != null) {
-	    em.remove(booking);
-	}
+        Booking booking = em.find(Booking.class, id);
+        if (booking != null) {
+            em.remove(booking);
+        }
 
     }
 
     // helpers
 
     private String getSearchPattern(SearchCriteria criteria) {
-	if (StringUtils.hasText(criteria.getSearchString())) {
-	    return "'%" + criteria.getSearchString().toLowerCase().replace('*', '%') + "%'";
-	} else {
-	    return "'%'";
-	}
+        if (StringUtils.hasText(criteria.getSearchString())) {
+            return "'%" + criteria.getSearchString().toLowerCase().replace('*', '%') + "%'";
+        } else {
+            return "'%'";
+        }
     }
 
     private User findUser(String username) {
-	return (User) em.createQuery("select u from User u where u.username = :username").setParameter("username",
-		username).getSingleResult();
+        return (User) em.createQuery("select u from User u where u.username = :username")
+                .setParameter("username", username)
+                .getSingleResult();
     }
 
 }

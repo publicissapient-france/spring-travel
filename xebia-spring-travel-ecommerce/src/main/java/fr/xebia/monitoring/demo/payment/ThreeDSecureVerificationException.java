@@ -21,7 +21,7 @@ import org.springframework.payment.core.VerificationServiceException;
 /**
  * <a href="http://en.wikipedia.org/wiki/3-D_Secure">3 D Secure</a> verification
  * exception.
- * 
+ *
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
 @SuppressWarnings("serial")
