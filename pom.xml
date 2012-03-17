@@ -319,7 +319,7 @@
             <plugin>
                <groupId>org.fusesource.mvnplugins</groupId>
                <artifactId>maven-provision-plugin</artifactId>
-               <version>1.14-SNAPSHOT</version>
+               <version>1.15</version>
             </plugin>
             <plugin>
                <groupId>org.apache.cxf</groupId>
