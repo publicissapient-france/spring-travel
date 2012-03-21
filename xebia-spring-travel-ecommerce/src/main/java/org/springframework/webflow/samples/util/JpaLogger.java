@@ -10,6 +10,10 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.samples.booking.BugService;
+
+import javax.annotation.PostConstruct;
 
 @Aspect
 @SuppressWarnings("rawtypes")
@@ -17,7 +21,21 @@ public class JpaLogger {
 	private final Logger LOGGER = LoggerFactory
 			.getLogger("org.springframework.webflow.samples.util.JpaLogger");
 
-	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled;
+
+    /**
+     * {@link org.springframework.webflow.samples.booking.BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.JPA_LOGGER.getCode()));
+    }
 
 	public void disable() {
 			this.isBugEnabled.set(false);

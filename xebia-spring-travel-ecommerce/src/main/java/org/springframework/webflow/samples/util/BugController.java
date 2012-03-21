@@ -65,7 +65,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug1(int securityCode) {
-        if (securityCode == 421) {
+        if (securityCode == BugEnum.BOOKING_ACTION_CONTROLLER.getCode()) {
             this.bookingAction.disable();
             return "Bug 1 is now disabled";
         }
@@ -74,7 +74,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug2(int securityCode) {
-        if (securityCode == 666) {
+        if (securityCode == BugEnum.JPA_LOGGER.getCode()) {
             this.jpaLogger.disable();
             return "Bug 2 is now disabled";
         }
@@ -83,7 +83,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug3(int securityCode) {
-        if (securityCode == 314) {
+        if (securityCode == BugEnum.DATABASE_CACHE_ASPECT.getCode()) {
             this.databaseCacheAspect.disable();
             return "Bug 3 is now disabled";
         }
@@ -92,7 +92,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug4(int securityCode) {
-        if (securityCode == 3615) {
+        if (securityCode == BugEnum.BOOKING_SERVICE_ENABLED_BOOKINGS.getCode()) {
             this.bookingService.disableBookingsBug();
             return "Bug 4 is now disabled";
         }
@@ -102,7 +102,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug5(int securityCode) {
-        if (securityCode == 3614) {
+        if (securityCode == BugEnum.BOOKING_SERVICE_ENABLED_HOTELS.getCode()) {
             this.bookingService.disableHotelsBug();
             return "Bug 5 is now disabled";
         }
@@ -111,7 +111,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug6(int securityCode) {
-        if (securityCode == 806) {
+        if (securityCode == BugEnum.CACHE_FILTER.getCode()) {
             this.cacheFilter.disable();
             return "Bug 6 is now disabled";
         }
@@ -120,7 +120,7 @@ public class BugController {
 
     @ManagedOperation
     public String disableBug7(int securityCode) {
-        if (securityCode == 1337) {
+        if (securityCode == BugEnum.BOOKING_SERVICE_LEAK.getCode()) {
             this.bookingService.disableLeak();
             return "Bug 7 is now disabled";
         }

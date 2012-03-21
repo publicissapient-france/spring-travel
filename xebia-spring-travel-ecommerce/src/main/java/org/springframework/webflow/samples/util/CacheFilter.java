@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -26,16 +27,33 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.webflow.samples.booking.BugService;
 
 @ManagedResource("travel-ecommerce:type=CacheFilter")
 public class CacheFilter implements Filter {
 
-	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled;
 
 	private AtomicInteger cacheHit = new AtomicInteger(0);
 	private AtomicInteger cacheMiss = new AtomicInteger(0);
+
+    /**
+     * {@link org.springframework.webflow.samples.booking.BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.CACHE_FILTER.getCode()));
+    }
+
 
 	@ManagedOperation
 	public int getCacheHit() {

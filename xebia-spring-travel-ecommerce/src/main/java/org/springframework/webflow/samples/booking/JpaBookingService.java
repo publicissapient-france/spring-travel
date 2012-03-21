@@ -1,10 +1,13 @@
 package org.springframework.webflow.samples.booking;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.samples.util.BugEnum;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -22,13 +25,32 @@ public class JpaBookingService implements BookingService {
 
     private EntityManager em;
 
-    private AtomicBoolean isBookingsBugEnabled = new AtomicBoolean(true);
 
-    private AtomicBoolean isLeakEnabled = new AtomicBoolean(true);
+    private AtomicBoolean isBookingsBugEnabled;
 
-    private AtomicBoolean isHotelsBugEnabled = new AtomicBoolean(true);
+    private AtomicBoolean isLeakEnabled;
+
+    private AtomicBoolean isHotelsBugEnabled;
 
     private List<String> leakingList = new ArrayList<String>();
+
+    /**
+     * {@link BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBookingsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_ACTION_CONTROLLER.getCode()));
+
+        isLeakEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_LEAK.getCode()));
+
+        isHotelsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS.getCode()));
+    }
 
     public void disableHotelsBug() {
         isHotelsBugEnabled.set(false);

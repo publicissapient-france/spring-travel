@@ -8,8 +8,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.samples.booking.BugService;
 import org.springframework.webflow.samples.booking.Hotel;
 import org.springframework.webflow.samples.booking.SearchCriteria;
+
+import javax.annotation.PostConstruct;
 
 @Aspect
 public class DatabaseCacheAspect {
@@ -17,9 +21,24 @@ public class DatabaseCacheAspect {
     @SuppressWarnings("unused")
     private final Logger LOGGER = LoggerFactory.getLogger("fr.xebia.timer.DatabaseCache");
 
-	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled;
 
     private HotelCache hotelCache;
+
+    /**
+     * {@link org.springframework.webflow.samples.booking.BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.DATABASE_CACHE_ASPECT.getCode()));
+    }
+
 
 	public void disable() {
 		isBugEnabled.set(false);

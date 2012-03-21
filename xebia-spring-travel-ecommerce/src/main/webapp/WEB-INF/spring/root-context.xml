@@ -59,7 +59,6 @@
   	<bean id="bugController" class="org.springframework.webflow.samples.util.BugController"/>
   	
   	<bean id="cacheFilter" class="org.springframework.webflow.samples.util.CacheFilter"/>
-  	
   
   	
 </beans>

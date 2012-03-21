@@ -98,3 +98,5 @@ echo ""
 echo "Files to be used by JMeter are located in jakarta-jmeter-2.5.1/data"
 echo ""
 
+java -classpath ../lib/hsqldb.jar org.hsqldb.server.Server --database.0 xebia-spring-travel --dbname.0 bookings
+java -classpath ../lib/hsqldb.jar org.hsqldb.util.DatabaseManager
