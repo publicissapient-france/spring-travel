@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+   xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+   <id>assembly</id>
+   
+   <formats>
+      <format>zip</format>
+   </formats>
+   <includeBaseDirectory>true</includeBaseDirectory>
+   <baseDirectory>apache-tomcat-${tomcat.version}</baseDirectory>
+   
+   <fileSets>
+      <fileSet>
+         <directory>target/apache-tomcat-prepared
+         </directory>
+         <outputDirectory>/</outputDirectory>
+         <excludes>
+            <exclude>**/webapps/docs/**</exclude>
+            <exclude>**/webapps/examples/**</exclude>
+            <exclude>**/webapps/host-manager/**</exclude>
+            <exclude>**/webapps/manager/**</exclude>
+            <exclude>**/webapps/ROOT/**</exclude>
+         </excludes>
+      </fileSet>
+   </fileSets> 
+   
+   <dependencySets>
+      <dependencySet>
+         <includes>
+            <include>fr.xebia.demo.travel:xebia-spring-travel-antifraud</include>
+         </includes>
+         <outputDirectory>webapps</outputDirectory>
+         <outputFileNameMapping>antifraud.war</outputFileNameMapping>
+         <unpack>false</unpack>
+      </dependencySet>
+      <dependencySet>
+         <includes>
+            <include>fr.xebia.demo.travel:xebia-spring-travel-ecommerce</include>
+         </includes>
+         <outputDirectory>webapps</outputDirectory>
+         <outputFileNameMapping>ROOT.war</outputFileNameMapping>
+         <unpack>false</unpack>
+      </dependencySet>
+   </dependencySets>
+</assembly>

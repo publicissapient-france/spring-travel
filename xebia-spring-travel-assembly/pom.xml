@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>fr.xebia.demo.travel</groupId>
+   <artifactId>xebia-spring-travel-assembly</artifactId>
+   <name>xebia-spring-travel-assembly</name>
+
+   <packaging>pom</packaging>
+
+   <parent>
+      <groupId>fr.xebia.demo.travel</groupId>
+      <artifactId>xebia-spring-travel</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+   </parent>
+
+   <dependencies>
+      <dependency>
+         <groupId>fr.xebia.demo.travel</groupId>
+         <artifactId>xebia-spring-travel-antifraud</artifactId>
+         <version>${project.version}</version>
+         <type>war</type>
+      </dependency>
+      <dependency>
+         <groupId>fr.xebia.demo.travel</groupId>
+         <artifactId>xebia-spring-travel-ecommerce</artifactId>
+         <version>${project.version}</version>
+         <type>war</type>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <!-- Unzip tomcat package in target directory and rename it without 
+            version -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>unnzip</id>
+                  <phase>package</phase>
+                  <configuration>
+                     <target>
+                        <unzip
+                           src="../xebia-spring-travel-environment-installer/apache-tomcat-${tomcat.version}.zip"
+                           dest="${project.build.directory}" />
+                        <move
+                           file="${project.build.directory}/apache-tomcat-${tomcat.version}"
+                           tofile="${project.build.directory}/apache-tomcat-prepared" />
+                        <delete>
+                           <fileset
+                              dir="${project.build.directory}/apache-tomcat-prepared/webapps" />
+                        </delete>
+                     </target>
+                  </configuration>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <!-- Build tomcat package with up to date dependencies -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>assembly</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>single</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <configuration>
+               <descriptors>
+                  <descriptor>assemblyDescriptor.xml</descriptor>
+               </descriptors>
+            </configuration>
+         </plugin>
+         <!-- Copy newly created tomcat package to installer directory -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>install</phase>
+                  <configuration>
+                     <target>
+                        <copy
+                           file="${project.build.directory}/${artifactId}-${project.version}-assembly.zip"
+                           tofile="../xebia-spring-travel-environment-installer/apache-tomcat-${tomcat.version}.zip" />
+                     </target>
+                  </configuration>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+</project>
