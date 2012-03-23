@@ -56,7 +56,8 @@
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
                <execution>
-                  <phase>install</phase>
+                  <id>copy</id>
+                  <phase>package</phase>
                   <configuration>
                      <target>
                         <copy
