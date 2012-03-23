@@ -13,8 +13,7 @@
    
    <fileSets>
       <fileSet>
-         <directory>target/apache-tomcat-prepared
-         </directory>
+         <directory>apache-tomcat</directory>
          <outputDirectory>/</outputDirectory>
          <excludes>
             <exclude>**/webapps/docs/**</exclude>
