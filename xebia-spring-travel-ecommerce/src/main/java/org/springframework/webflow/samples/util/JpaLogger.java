@@ -34,10 +34,11 @@ public class JpaLogger {
      */
     @PostConstruct
     public void init() {
-        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.JPA_LOGGER.getCode()));
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.JPA_LOGGER));
     }
 
 	public void disable() {
+            bugService.disableBug(BugEnum.JPA_LOGGER);
 			this.isBugEnabled.set(false);
 	}
 

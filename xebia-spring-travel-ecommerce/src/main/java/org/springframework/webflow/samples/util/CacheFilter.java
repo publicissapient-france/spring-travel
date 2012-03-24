@@ -51,7 +51,7 @@ public class CacheFilter implements Filter {
      */
     @PostConstruct
     public void init() {
-        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.CACHE_FILTER.getCode()));
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.CACHE_FILTER));
     }
 
 
@@ -66,6 +66,7 @@ public class CacheFilter implements Filter {
 	}
 
 	public void disable() {
+        bugService.disableBug(BugEnum.CACHE_FILTER);
 		isBugEnabled.set(false);
 	}
 

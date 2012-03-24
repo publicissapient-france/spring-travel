@@ -36,11 +36,12 @@ public class DatabaseCacheAspect {
      */
     @PostConstruct
     public void init() {
-        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.DATABASE_CACHE_ASPECT.getCode()));
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.DATABASE_CACHE_ASPECT));
     }
 
 
 	public void disable() {
+        bugService.disableBug(BugEnum.DATABASE_CACHE_ASPECT);
 		isBugEnabled.set(false);
 	}
 

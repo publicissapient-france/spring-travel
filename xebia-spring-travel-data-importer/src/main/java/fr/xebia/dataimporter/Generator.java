@@ -171,6 +171,23 @@ public class Generator {
         LOG.debug("Done.");
     }
 
+    /**
+     * Insert bugs into database.
+     *
+     * @throws SQLException
+     */
+    private void generateBugs() throws SQLException {
+        LOG.info("Inserting Bugs...");
+        statement.executeUpdate("DELETE FROM Bug");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(421,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(666,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(314,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(3615,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(3614,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(806,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(1337,true)");
+    }
+
     public void generateUsersFromTo(int from, int to) throws SQLException {
         LOG.info("Generating users...");
 
@@ -284,6 +301,7 @@ public class Generator {
             generator.generateHotelFromTo(1, numberOfEntries);
             generator.generateAuthoritiesFromTo(1, numberOfEntries);
             generator.generateCustomerFromTo(1, numberOfEntries);
+            generator.generateBugs();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {

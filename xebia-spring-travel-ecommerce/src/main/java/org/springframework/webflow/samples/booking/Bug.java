@@ -1,6 +1,7 @@
 package org.springframework.webflow.samples.booking;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,12 +11,9 @@ import javax.persistence.*;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-public class Bug {
+public class Bug implements Serializable {
     @Id
     private int code;
-    
-    @Column
-    private String description;
 
     @Column
     private boolean enabled;
@@ -26,14 +24,6 @@ public class Bug {
 
     public void setCode(int code) {
         this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public boolean isEnabled() {

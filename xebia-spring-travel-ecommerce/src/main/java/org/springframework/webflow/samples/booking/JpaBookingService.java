@@ -1,5 +1,7 @@
 package org.springframework.webflow.samples.booking;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Repository
 public class JpaBookingService implements BookingService {
 
-    private EntityManager em;
+    /**
+     * Logger
+     */
+    private static Logger logger = LoggerFactory.getLogger(JpaBookingService.class);
 
+    private EntityManager em;
 
     private AtomicBoolean isBookingsBugEnabled;
 
@@ -45,23 +51,23 @@ public class JpaBookingService implements BookingService {
      */
     @PostConstruct
     public void init() {
-        isBookingsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_ACTION_CONTROLLER.getCode()));
-
-        isLeakEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_LEAK.getCode()));
-
-        isHotelsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS.getCode()));
+        isBookingsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_BOOKINGS));
+        isLeakEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_LEAK));
+        isHotelsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS));
     }
 
     public void disableHotelsBug() {
+        bugService.disableBug(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS);
         isHotelsBugEnabled.set(false);
     }
 
-    @Override
     public void disableLeak() {
+        bugService.disableBug(BugEnum.BOOKING_SERVICE_LEAK);
         this.isLeakEnabled.set(false);
     }
 
     public void disableBookingsBug() {
+        bugService.disableBug(BugEnum.BOOKING_SERVICE_ENABLED_BOOKINGS);
         this.isBookingsBugEnabled.set(false);
     }
 

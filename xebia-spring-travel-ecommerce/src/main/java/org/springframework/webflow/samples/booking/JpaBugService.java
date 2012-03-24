@@ -3,6 +3,7 @@ package org.springframework.webflow.samples.booking;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.webflow.samples.util.BugEnum;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +19,9 @@ import java.util.List;
 @Service("bugService")
 @Repository
 public class JpaBugService implements BugService {
+    /**
+     * {@link EntityManager}
+     */
     private EntityManager em;
 
     /**
@@ -32,27 +36,38 @@ public class JpaBugService implements BugService {
      * {@inheritDoc}
      */
     @Transactional(readOnly = true)
-    @SuppressWarnings("unchecked")
-    @Override
-    public Bug findByCode(int code) {
-        final String hqlQuery = "select  b from Bug b where b.code = :code";
-        return (Bug) em.createQuery(hqlQuery).setParameter("code", code).getSingleResult();
+    public Bug findByCode(BugEnum bugRef) {
+        if(bugRef == null) {
+            return null;
+        }
+
+        return em.find(Bug.class, bugRef.getCode());
     }
 
     /**
      * {@inheritDoc}
      */
     @Transactional(readOnly = true)
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean getStatusByCode(int code) {
-        final String hqlQuery = "select  b from Bug b where b.code = :code";
-        Bug bug = (Bug) em.find(Bug.class, code);
+    public Boolean getStatusByCode(BugEnum bugRef) {
+        Bug bug = this.findByCode(bugRef);
 
+        // If the bug does not exist in the database, return true for consistency
         if(bug == null) {
             return true;
         }
 
         return bug.isEnabled();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    public void disableBug(BugEnum bugRef) {
+        Bug bug = em.find(Bug.class, bugRef.getCode());
+
+        if(bug != null) {
+            bug.setEnabled(false);
+        }
     }
 }

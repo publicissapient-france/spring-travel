@@ -3,6 +3,7 @@ package org.springframework.webflow.samples.booking;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.webflow.samples.util.BugEnum;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,17 +19,25 @@ public interface BugService {
     /**
      * Returns a bug using its code.
      *
-     * @param code
+     * @param bugRef
      * @return {@link Bug}
      */
-    Bug findByCode(int code);
+    Bug findByCode(BugEnum bugRef);
 
     /**
      * Returns the status of the bug using its code.
      *
-     * @param code
-     * @return
+     * @param bugRef
+     * @return {@link Boolean}
      */
-    boolean getStatusByCode(int code);
+    Boolean getStatusByCode(BugEnum bugRef);
+
+    /**
+     * Disable the bug passed as parameter.
+     *
+     * @param bugRef
+     */
+    void disableBug(BugEnum bugRef);
+
 
 }
