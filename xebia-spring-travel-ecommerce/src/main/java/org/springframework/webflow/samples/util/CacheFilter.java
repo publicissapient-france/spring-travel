@@ -1,18 +1,5 @@
 package org.springframework.webflow.samples.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,9 +13,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.webflow.samples.booking.BugService;
 
@@ -55,26 +54,28 @@ public class CacheFilter implements Filter {
     }
 
 
-	@ManagedOperation
+	@ManagedAttribute
 	public int getCacheHit() {
 		return cacheHit.get();
 	}
 
-	@ManagedOperation
+	@ManagedAttribute
 	public int getCacheMiss() {
 		return cacheMiss.get();
 	}
 
-	public void disable() {
-        bugService.disableBug(BugEnum.CACHE_FILTER);
-		isBugEnabled.set(false);
+	public void setBugEnabled(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.CACHE_FILTER, enabled);
+		isBugEnabled.set(enabled);
 	}
 
-	public boolean getBugEnabled() {
-		return isBugEnabled.get();
-	}
 
-	public class CacheResponseWrapper extends HttpServletResponseWrapper {
+    public boolean isBugEnabled() {
+
+        return isBugEnabled.get();
+    }
+
+    public class CacheResponseWrapper extends HttpServletResponseWrapper {
 
 		public static final int BUFFER_SIZE = 100;
 

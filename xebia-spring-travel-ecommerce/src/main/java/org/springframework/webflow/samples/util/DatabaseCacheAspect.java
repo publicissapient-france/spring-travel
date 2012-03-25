@@ -1,5 +1,6 @@
 package org.springframework.webflow.samples.util;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -13,8 +14,6 @@ import org.springframework.webflow.samples.booking.BugService;
 import org.springframework.webflow.samples.booking.Hotel;
 import org.springframework.webflow.samples.booking.SearchCriteria;
 
-import javax.annotation.PostConstruct;
-
 @Aspect
 public class DatabaseCacheAspect {
 
@@ -23,6 +22,7 @@ public class DatabaseCacheAspect {
 
 	private AtomicBoolean isBugEnabled;
 
+    @Autowired
     private HotelCache hotelCache;
 
     /**
@@ -40,10 +40,14 @@ public class DatabaseCacheAspect {
     }
 
 
-	public void disable() {
-        bugService.disableBug(BugEnum.DATABASE_CACHE_ASPECT);
-		isBugEnabled.set(false);
+	public void setEnabled(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.DATABASE_CACHE_ASPECT, enabled);
+		isBugEnabled.set(enabled);
 	}
+
+    public boolean isBugEnabled(){
+        return isBugEnabled.get();
+    }
 
 	public HotelCache getHotelCache() {
 		return hotelCache;

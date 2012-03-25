@@ -1,12 +1,6 @@
 package org.springframework.webflow.samples.booking;
 
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.samples.util.BugEnum;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +31,11 @@ public interface BugService {
      *
      * @param bugRef
      */
-    void disableBug(BugEnum bugRef);
+    void setStatusByCode(BugEnum bugRef, boolean enabled);
 
+    /**
+     * Enable all the bugs
+     */
+    void resetBugs();
 
 }

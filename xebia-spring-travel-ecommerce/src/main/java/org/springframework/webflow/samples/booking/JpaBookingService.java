@@ -1,5 +1,12 @@
 package org.springframework.webflow.samples.booking;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.samples.util.BugEnum;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A JPA-based implementation of the Booking Service. Delegates to a JPA entity manager to issue data access calls
@@ -34,11 +34,7 @@ public class JpaBookingService implements BookingService {
 
     private AtomicBoolean isBookingsBugEnabled;
 
-    private AtomicBoolean isLeakEnabled;
-
     private AtomicBoolean isHotelsBugEnabled;
-
-    private List<String> leakingList = new ArrayList<String>();
 
     /**
      * {@link BugService}
@@ -52,24 +48,29 @@ public class JpaBookingService implements BookingService {
     @PostConstruct
     public void init() {
         isBookingsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_BOOKINGS));
-        isLeakEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_LEAK));
         isHotelsBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS));
     }
 
-    public void disableHotelsBug() {
-        bugService.disableBug(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS);
-        isHotelsBugEnabled.set(false);
+    public void setHotelsEnabled(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_HOTELS, enabled);
+        isHotelsBugEnabled.set(enabled);
     }
 
-    public void disableLeak() {
-        bugService.disableBug(BugEnum.BOOKING_SERVICE_LEAK);
-        this.isLeakEnabled.set(false);
+    public void setBookingsEnabled(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.BOOKING_SERVICE_ENABLED_BOOKINGS, enabled);
+        this.isBookingsBugEnabled.set(enabled);
     }
 
-    public void disableBookingsBug() {
-        bugService.disableBug(BugEnum.BOOKING_SERVICE_ENABLED_BOOKINGS);
-        this.isBookingsBugEnabled.set(false);
+    @Override
+    public boolean isBookingsEnabled() {
+        return isBookingsBugEnabled.get();
     }
+
+    @Override
+    public boolean isHotelsEnabled() {
+        return isHotelsBugEnabled.get();
+    }
+
 
     @PersistenceContext
     public void setEntityManager(EntityManager em) {
@@ -83,7 +84,14 @@ public class JpaBookingService implements BookingService {
             final String hqlQuery;
 
             if (isBookingsBugEnabled.get()) {
-                hqlQuery = "select distinct b from Booking b left join fetch b.hotel f left join fetch f.bookings where b.user.username = :username order by b.checkinDate";
+                hqlQuery = "select distinct b from Booking b" +
+                            " left join fetch b.hotel f" +
+                            " left join fetch f.bookings bb" +
+                            " left join fetch bb.user u " +
+                            " left join fetch u.bookings  d" +
+                            " left join fetch d.hotel  h " +
+                            "where b.user.username = :username " +
+                            "order by b.checkinDate";
             } else {
                 hqlQuery = "select  b from Booking b where b.user.username = :username order by b.checkinDate";
             }
@@ -124,10 +132,6 @@ public class JpaBookingService implements BookingService {
                     .setMaxResults(criteria.getPageSize())
                     .setFirstResult(criteria.getPage() * criteria.getPageSize())
                     .getResultList();
-        }
-
-        if(isLeakEnabled.get()) {
-            leakingList.add("l33333333333333333333333333334k ! " + System.currentTimeMillis() + "-" + System.nanoTime());
         }
 
         return resultList;
@@ -171,5 +175,7 @@ public class JpaBookingService implements BookingService {
                 .setParameter("username", username)
                 .getSingleResult();
     }
+
+
 
 }

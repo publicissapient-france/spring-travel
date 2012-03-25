@@ -1,13 +1,12 @@
 package org.springframework.webflow.samples.booking;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.samples.util.BugEnum;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -63,11 +62,18 @@ public class JpaBugService implements BugService {
      * {@inheritDoc}
      */
     @Transactional
-    public void disableBug(BugEnum bugRef) {
+    public void setStatusByCode(BugEnum bugRef, boolean enabled) {
         Bug bug = em.find(Bug.class, bugRef.getCode());
 
         if(bug != null) {
-            bug.setEnabled(false);
+            bug.setEnabled(enabled);
         }
+    }
+
+    @Transactional
+    public void resetBugs(){
+
+        em.createNativeQuery("update Bug set enabled = true").executeUpdate();
+
     }
 }

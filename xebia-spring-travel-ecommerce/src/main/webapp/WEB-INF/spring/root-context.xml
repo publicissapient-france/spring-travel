@@ -36,10 +36,15 @@
 
     <!-- AOP configuration -->
 	<aop:config>
-		<aop:pointcut id="firstPointcut"  expression="execution(* fr.xebia..*(..))"/>
+		<aop:pointcut id="firstPointcut"  expression="execution(* fr.xebia..* (..))"/>
+        <aop:pointcut id="secondPointcut"  expression="execution(* org.springframework.webflow.samples..*BookingService.* (..))"/>
 		<aop:aspect id="loggingAspect" ref="monLogger">
 		    <aop:before method="logMethodEntry"  pointcut-ref="firstPointcut"/>
 		    <aop:after-returning method="logMethodExit" returning="result" pointcut-ref="firstPointcut"/>
+	    </aop:aspect>
+		<aop:aspect ref="monLogger">
+		    <aop:before method="logMethodEntry"  pointcut-ref="secondPointcut"/>
+		    <aop:after-returning method="logMethodExit" returning="result" pointcut-ref="secondPointcut"/>
 	    </aop:aspect>
 	</aop:config>
 

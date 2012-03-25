@@ -1,12 +1,12 @@
 
 package org.springframework.webflow.samples.util;
 
+import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.samples.booking.BugService;
-
-import javax.annotation.PostConstruct;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class BookingActionController {
@@ -27,9 +27,9 @@ public class BookingActionController {
         isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.BOOKING_ACTION_CONTROLLER));
     }
 
-	public void disable() {
-        bugService.disableBug(BugEnum.BOOKING_ACTION_CONTROLLER);
-		this.isBugEnabled.set(false);
+	public void setBugStatus(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.BOOKING_ACTION_CONTROLLER, enabled);
+		this.isBugEnabled.set(enabled);
 	}
 
 	public boolean isBugEnabled() {
