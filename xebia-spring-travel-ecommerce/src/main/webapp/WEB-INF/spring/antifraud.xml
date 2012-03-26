@@ -43,6 +43,6 @@
    </jaxws:client>
 
    <http-conf:conduit name="{http://ws.xebia.fr/travel/antifraud/v1_0}AntiFraudService.http-conduit">
-      <http-conf:client ConnectionTimeout="500" ReceiveTimeout="3500" />
+      <http-conf:client ConnectionTimeout="50000" ReceiveTimeout="35000" Connection="close"/>
    </http-conf:conduit>
 </beans>

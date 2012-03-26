@@ -37,7 +37,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
 
-@ManagedResource
+@ManagedResource("travel-antifraud:type=AntiFraudService")
 public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 		BeanNameAware {
 
@@ -98,6 +98,7 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 			e1.printStackTrace();
 		}
 		try {
+            DriverManager.setLoginTimeout(60);
 			Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT 1 FROM fraud");
