@@ -1,5 +1,6 @@
 package org.springframework.webflow.samples.util;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -10,6 +11,8 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.samples.booking.BugService;
 
 @Aspect
 @SuppressWarnings("rawtypes")
@@ -17,11 +20,30 @@ public class JpaLogger {
 	private final Logger LOGGER = LoggerFactory
 			.getLogger("org.springframework.webflow.samples.util.JpaLogger");
 
-	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled;
 
-	public void disable() {
-			this.isBugEnabled.set(false);
+    /**
+     * {@link org.springframework.webflow.samples.booking.BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.JPA_LOGGER));
+    }
+
+	public void setEnabled(boolean enabled) {
+            bugService.setStatusByCode(BugEnum.JPA_LOGGER,enabled);
+			this.isBugEnabled.set(enabled);
 	}
+
+    public boolean isBugEnabled(){
+        return this.isBugEnabled.get();
+    }
 
 	@AfterReturning(pointcut = "execution(* org.springframework.webflow.samples.booking.JpaBookingService.find*(..))", returning = "obj")
 	public void logReturnedObject(Object obj) {

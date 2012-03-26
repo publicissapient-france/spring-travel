@@ -1,5 +1,18 @@
 package org.springframework.webflow.samples.util;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,49 +26,56 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.webflow.samples.booking.BugService;
 
 @ManagedResource("travel-ecommerce:type=CacheFilter")
 public class CacheFilter implements Filter {
 
-	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled;
 
 	private AtomicInteger cacheHit = new AtomicInteger(0);
 	private AtomicInteger cacheMiss = new AtomicInteger(0);
 
-	@ManagedOperation
+    /**
+     * {@link org.springframework.webflow.samples.booking.BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.CACHE_FILTER));
+    }
+
+
+	@ManagedAttribute
 	public int getCacheHit() {
 		return cacheHit.get();
 	}
 
-	@ManagedOperation
+	@ManagedAttribute
 	public int getCacheMiss() {
 		return cacheMiss.get();
 	}
 
-	public void disable() {
-		isBugEnabled.set(false);
+	public void setBugEnabled(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.CACHE_FILTER, enabled);
+		isBugEnabled.set(enabled);
 	}
 
-	public boolean getBugEnabled() {
-		return isBugEnabled.get();
-	}
 
-	public class CacheResponseWrapper extends HttpServletResponseWrapper {
+    public boolean isBugEnabled() {
+
+        return isBugEnabled.get();
+    }
+
+    public class CacheResponseWrapper extends HttpServletResponseWrapper {
 
 		public static final int BUFFER_SIZE = 100;
 

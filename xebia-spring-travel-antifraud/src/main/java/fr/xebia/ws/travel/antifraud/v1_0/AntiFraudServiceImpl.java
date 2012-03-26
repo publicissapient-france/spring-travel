@@ -23,6 +23,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
 
@@ -57,6 +59,8 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
     private String jdbcUrl = "jdbc.url=jdbc:hsqldb:mem:aname";
     private String user = "SA";
     private String password = "";
+    
+    private final AtomicBoolean bugEnabled = new AtomicBoolean(true);
 
 	@Profiled(slowInvocationThresholdInMillis = 1000, verySlowInvocationThresholdInMillis = 2000)
 	@Override
@@ -65,7 +69,10 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 		try {
 			randomlySlowRequest();
 			randomlyThrowException();
-			checkDbOnline();
+            
+            if (bugEnabled.get()){
+			    checkDbOnline();
+            }
 			String result = "txid-" + Math.abs(random.nextLong());
 
 			auditLogger.info("Authorize booking " + toXmlString(booking) + " "
@@ -94,6 +101,7 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 			Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT 1 FROM fraud");
+            resultSet.next();
 			resultSet.close();
 			statement.close();
 			connection.close();
@@ -126,6 +134,20 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 		return suspiciousBookingRatioInPercent;
 	}
 
+    @ManagedAttribute
+    public boolean isBugEnabled(){
+        return bugEnabled.get();
+    }
+
+    @ManagedOperation
+    public String disableBug(int code){
+        if (code == 3113){
+            bugEnabled.set(false);
+            return "Bug successfully disabled.";
+        }
+        return "Follow the white rabbit ...";
+    }
+    
 	protected void randomlySlowRequest() {
 
 		long sleepDurationInMillis = random.nextInt(200);

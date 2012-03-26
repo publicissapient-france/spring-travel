@@ -1,5 +1,6 @@
 package org.springframework.webflow.samples.util;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -8,6 +9,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.samples.booking.BugService;
 import org.springframework.webflow.samples.booking.Hotel;
 import org.springframework.webflow.samples.booking.SearchCriteria;
 
@@ -17,13 +20,34 @@ public class DatabaseCacheAspect {
     @SuppressWarnings("unused")
     private final Logger LOGGER = LoggerFactory.getLogger("fr.xebia.timer.DatabaseCache");
 
-	private AtomicBoolean isBugEnabled = new AtomicBoolean(true);
+	private AtomicBoolean isBugEnabled;
 
+    @Autowired
     private HotelCache hotelCache;
 
-	public void disable() {
-		isBugEnabled.set(false);
+    /**
+     * {@link org.springframework.webflow.samples.booking.BugService}
+     */
+    @Autowired
+    private BugService bugService;
+
+    /**
+     * Initialize bugs status.
+     */
+    @PostConstruct
+    public void init() {
+        isBugEnabled = new AtomicBoolean(bugService.getStatusByCode(BugEnum.DATABASE_CACHE_ASPECT));
+    }
+
+
+	public void setEnabled(boolean enabled) {
+        bugService.setStatusByCode(BugEnum.DATABASE_CACHE_ASPECT, enabled);
+		isBugEnabled.set(enabled);
 	}
+
+    public boolean isBugEnabled(){
+        return isBugEnabled.get();
+    }
 
 	public HotelCache getHotelCache() {
 		return hotelCache;
