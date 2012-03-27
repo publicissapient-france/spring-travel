@@ -28,8 +28,9 @@
          <directory>apache-tomcat</directory>
          <outputDirectory>/</outputDirectory>
          <fileMode>0755</fileMode>
+         <directoryMode>0755</directoryMode>
          <includes>
-            <include>**/bin/**</include>
+            <include>bin/**</include>
          </includes>
       </fileSet>
    </fileSets> 
