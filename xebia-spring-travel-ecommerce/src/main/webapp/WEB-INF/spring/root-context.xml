@@ -9,8 +9,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-   <!-- Scans for application @Components to deploy -->
-   <context:component-scan base-package="org.springframework.webflow.samples" />
+    <!-- Scans for application @Components to deploy -->
+    <context:component-scan base-package="org.springframework.webflow.samples" />
 
    <!-- Imports the configurations of the different infrastructure systems of the application -->
    <import resource="mvc.xml" />
@@ -18,6 +18,9 @@
    <import resource="db.xml" />
    <import resource="security.xml" />
    <import resource="antifraud.xml" />
+
+   <!--  PLO AOP auto discovery -->
+   <aop:aspectj-autoproxy/>
 
    <!-- Load properties required for initialization Spring beans. See @Value fields in PaymentConfiguration. -->
    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -34,25 +37,6 @@
    <context:mbean-server id="mbeanServer"/>
    <context:mbean-export server="mbeanServer" />
 
-    <!-- AOP configuration -->
-	<aop:config>
-		<aop:pointcut id="firstPointcut"  expression="execution(* fr.xebia..* (..))"/>
-        <aop:pointcut id="secondPointcut"  expression="execution(* org.springframework.webflow.samples..*BookingService.* (..))"/>
-		<aop:aspect id="loggingAspect" ref="monLogger">
-		    <aop:before method="logMethodEntry"  pointcut-ref="firstPointcut"/>
-		    <aop:after-returning method="logMethodExit" returning="result" pointcut-ref="firstPointcut"/>
-	    </aop:aspect>
-		<aop:aspect ref="monLogger">
-		    <aop:before method="logMethodEntry"  pointcut-ref="secondPointcut"/>
-		    <aop:after-returning method="logMethodExit" returning="result" pointcut-ref="secondPointcut"/>
-	    </aop:aspect>
-	</aop:config>
-
-  	<bean id="monLogger" class="org.springframework.webflow.samples.util.TimeLogger"/>
-  	
-  	<!--  PLO AOP auto discovery -->
-  	<aop:aspectj-autoproxy/>
-  	
   	<bean id="jpaLogger" class="org.springframework.webflow.samples.util.JpaLogger"/>
   	
   	<bean id="databaseCacheAspect" class="org.springframework.webflow.samples.util.DatabaseCacheAspect">
@@ -64,6 +48,7 @@
   	<bean id="bugController" class="org.springframework.webflow.samples.util.BugController"/>
   	
   	<bean id="cacheFilter" class="org.springframework.webflow.samples.util.CacheFilter"/>
-  
-  	
+
+    <bean id="timeLoggerAspect" class="org.springframework.webflow.samples.util.TimeLoggerAspect" />
+
 </beans>

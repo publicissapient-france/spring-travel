@@ -24,6 +24,12 @@ public class BugController {
     @Autowired
     private CacheFilter cacheFilter;
 
+    /**
+     * {@link TimeLoggerAspect}
+     */
+    @Autowired
+    private TimeLoggerAspect timeLoggerAspect;
+
     @Autowired
     private BugService bugService;
 
@@ -107,7 +113,13 @@ public class BugController {
         return getStatusString(cacheFilter.isBugEnabled());
     }
 
-
+    /**
+     * @return status of the 7th bug.
+     */
+    @ManagedAttribute
+    public String getBug7(){
+        return getStatusString(timeLoggerAspect.isBugEnabled());
+    }
 
     @ManagedOperation
     public String disableBug1(int securityCode) {
@@ -170,6 +182,23 @@ public class BugController {
         return "Envy can be a positive motivator. Let it inspire you to work harder for what you want.";
     }
 
+    /**
+     * Disable bug 7.
+     *
+     * @param securityCode
+     * @return
+     */
+    @ManagedOperation
+    public String disableBug7(int securityCode) {
+        if (securityCode == BugEnum.METHOD_LOGGER.getCode()) {
+            this.timeLoggerAspect.setEnabled(false);
+            return "Bug 7 is now disabled";
+        }
+
+        this.timeLoggerAspect.setEnabled(true);
+
+        return "We cannot do anything alone, but together we can do anything. Come on, friends, unity gives strength.";
+    }
 
     @ManagedOperation
     public String resetAllBugs(){
@@ -181,6 +210,7 @@ public class BugController {
         this.databaseCacheAspect.setEnabled(true);
         this.jpaLogger.setEnabled(true);
         this.bookingAction.setBugStatus(true);
+        this.timeLoggerAspect.setEnabled(true);
 
         return "All bugs are now activated.";
     }

@@ -186,6 +186,7 @@ public class Generator {
         statement.executeUpdate("INSERT INTO Bug(code,enabled) values(3614,true)");
         statement.executeUpdate("INSERT INTO Bug(code,enabled) values(806,true)");
         statement.executeUpdate("INSERT INTO Bug(code,enabled) values(1337,true)");
+        statement.executeUpdate("INSERT INTO Bug(code,enabled) values(1221,true)");
     }
 
     public void generateUsersFromTo(int from, int to) throws SQLException {
