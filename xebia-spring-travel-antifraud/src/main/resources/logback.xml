@@ -64,11 +64,11 @@
       </encoder>
    </appender>
 
-   <logger name="fr.xebia.audit" additivity="false" level="TRACE">
+   <logger name="fr.xebia.audit" additivity="false" level="WARN">
       <appender-ref ref="audit-file" />
    </logger>
 
-   <logger name="fr.xebia.performances" additivity="false" level="TRACE">
+   <logger name="fr.xebia.performances" additivity="false" level="WARN">
       <appender-ref ref="performances-file" />
    </logger>
 

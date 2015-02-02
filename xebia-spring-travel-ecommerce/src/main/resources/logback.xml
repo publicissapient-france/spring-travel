@@ -90,20 +90,20 @@
 		</encoder>
 	</appender>
 
-	<logger name="fr.xebia.audit" additivity="false" level="TRACE">
+	<logger name="fr.xebia.audit" additivity="false" level="WARN">
 		<appender-ref ref="audit-file" />
 	</logger>
 
-	<logger name="fr.xebia.performances" additivity="false" level="TRACE">
+	<logger name="fr.xebia.performances" additivity="false" level="WARN">
 		<appender-ref ref="performances-file" />
 	</logger>
 
-	<logger name="fr.xebia.timer" additivity="false" level="DEBUG">
+	<logger name="fr.xebia.timer" additivity="false" level="WARN">
 		<appender-ref ref="timer-file" />
 	</logger>
 
 	
-	<logger name="org.hibernate" level="DEBUG" />
+	<logger name="org.hibernate" level="WARN" />
 
 	<root level="WARN">
 		<appender-ref ref="log-file" />
