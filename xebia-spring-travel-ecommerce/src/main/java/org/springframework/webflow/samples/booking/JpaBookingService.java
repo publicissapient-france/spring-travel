@@ -83,6 +83,7 @@ public class JpaBookingService implements BookingService {
         if (username != null) {
             final String hqlQuery;
 
+            /* TODO BUG SQL
             if (isBookingsBugEnabled.get()) {
                 hqlQuery = "select distinct b from Booking b" +
                             " left join fetch b.hotel f" +
@@ -92,9 +93,9 @@ public class JpaBookingService implements BookingService {
                             " left join fetch d.hotel  h " +
                             "where b.user.username = :username " +
                             "order by b.checkinDate";
-            } else {
+            } else {*/
                 hqlQuery = "select  b from Booking b where b.user.username = :username order by b.checkinDate";
-            }
+            /*} */
 
             return em.createQuery(hqlQuery).setParameter("username", username).getResultList();
         } else {

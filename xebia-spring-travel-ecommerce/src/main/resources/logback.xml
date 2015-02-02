@@ -22,7 +22,7 @@
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOGS_FOLDER}/xebia-spring-travel.log</file>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>WARN</level>
+			<level>INFO</level>
 		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>${LOGS_TO_COLLECT_FOLDER}/xebia-spring-travel.%d{yyyyMMdd}.log

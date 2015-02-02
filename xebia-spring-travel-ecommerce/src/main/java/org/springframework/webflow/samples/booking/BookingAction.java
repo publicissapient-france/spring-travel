@@ -144,13 +144,14 @@ public class BookingAction extends MultiAction implements SelfNaming,
 
         try {
             try {
-                if (bookingActionController.isBugEnabled()) {
+                // TODO SYNC BLOCK resulting in deadlock somewhere
+         /*       if (bookingActionController.isBugEnabled()) {
                     synchronized (this) {
                         antiFraudService.checkBooking(toAntiFraudBooking(booking));
                     }
-                } else {
+                } else {*/
                     antiFraudService.checkBooking(toAntiFraudBooking(booking));
-                }
+              /*  }*/
 
                 auditLogger.info("AntiFraud granted booking " + toXmlString(booking));
             } catch (SuspiciousBookingException e) {
