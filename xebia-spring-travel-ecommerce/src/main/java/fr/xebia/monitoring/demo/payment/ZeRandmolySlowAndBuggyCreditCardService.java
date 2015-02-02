@@ -62,12 +62,10 @@ public class ZeRandmolySlowAndBuggyCreditCardService implements CreditCardServic
     private int transactionAmountExceptionRatioInPercent = 0;
 
     public PaymentTransaction authorize(MonetaryAmount total, Order order, String requestId) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public PaymentTransaction capture(MonetaryAmount total, PaymentTransaction authTransaction) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -123,8 +121,8 @@ public class ZeRandmolySlowAndBuggyCreditCardService implements CreditCardServic
 
     public PaymentTransaction purchase(MonetaryAmount total, Order order, String requestId) {
         // TODO RANDOMLY SLOW and BUGGY EXCEPTION
-  //      randomlySlowRequest();
-  //      randmolyThrowException();
+        randomlySlowRequest();
+        randmolyThrowException();
         PaymentTransaction paymentTransaction = new PaymentTransaction();
         paymentTransaction.setDecision(Decision.ACCEPT);
         paymentTransaction.setTransactionId("tx-" + random.nextInt());

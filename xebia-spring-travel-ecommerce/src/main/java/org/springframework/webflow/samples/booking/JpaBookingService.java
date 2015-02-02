@@ -114,7 +114,7 @@ public class JpaBookingService implements BookingService {
                 " or lower(h.address) like " + pattern;
         final List resultList;
 
-        if (isHotelsBugEnabled.get()) {
+        if (isHotelsBugEnabled.get()) { // TODO Bad page flow in search
             List<Hotel> hotels = em.createQuery(hqlQuery).getResultList();
             resultList = new ArrayList<Hotel>();
             int i = 0;
