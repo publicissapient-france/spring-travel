@@ -70,9 +70,10 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 			randomlySlowRequest();
 			randomlyThrowException();
             
-            if (bugEnabled.get()){
+/*   TODO DB Contention on TP2
+         if (bugEnabled.get()){
 			    checkDbOnline();
-            }
+            }*/
 			String result = "txid-" + Math.abs(random.nextLong());
 
 			auditLogger.info("Authorize booking " + toXmlString(booking) + " "
