@@ -74,9 +74,11 @@ public class TimeLoggerAspect {
     @Before("firstPointcut() && secondPointcut()")
     public void logMethodEntry(JoinPoint joinPoint) {
         // If the bug is disabled, do not log anything
-        if(!this.isBugEnabled()) {
+  //      if(!this.isBugEnabled()) {
             return;
-        }
+    //    }
+
+ /*       // TODO Buggy Time logger
 
         Date date = new Date();
 
@@ -104,7 +106,7 @@ public class TimeLoggerAspect {
         sb.append(formatDate(date));
         sb.append("]");
 
-        LOGGER.debug(sb.toString());
+        LOGGER.debug(sb.toString());*/
 
     }
 
@@ -121,11 +123,12 @@ public class TimeLoggerAspect {
      */
     @AfterReturning(pointcut = "firstPointcut() && secondPointcut()", returning = "result")
     public void logMethodExit(StaticPart staticPart, Object result) {
-        if(!this.isBugEnabled()) {
+        // TODO Buggy Time logger
+        //if(!this.isBugEnabled()) {
             return;
-        }
+        //}
 
-        Date endDate = new Date();
+       /* Date endDate = new Date();
 
         MessageDigest md = null;
         try {
@@ -163,7 +166,7 @@ public class TimeLoggerAspect {
         sb.append(" avg time: ").append(stat.sum/stat.callCount).append("ms");
         sb.append(" Called ").append(stat.callCount).append(" times");
 
-        LOGGER.debug(sb.toString());
+        LOGGER.debug(sb.toString());*/
     }
 
     /**

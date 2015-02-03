@@ -47,7 +47,8 @@ public class JpaLogger {
 
 	@AfterReturning(pointcut = "execution(* org.springframework.webflow.samples.booking.JpaBookingService.find*(..))", returning = "obj")
 	public void logReturnedObject(Object obj) {
-		if (isBugEnabled.get()) {
+		// TODO JPA LOGGER
+		/*if (isBugEnabled.get()) {
 			if (obj instanceof List) {
 				List list = (List) obj;
 				for (Object resultObject : list) {
@@ -56,7 +57,7 @@ public class JpaLogger {
 			} else {
 				invokeGetters(obj);
 			}
-		}
+		}*/
 	}
 
 	private void invokeGetters(Object o) {
