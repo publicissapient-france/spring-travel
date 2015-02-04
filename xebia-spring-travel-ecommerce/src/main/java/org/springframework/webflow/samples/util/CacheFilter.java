@@ -201,7 +201,7 @@ public class CacheFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 
-/*		if (this.isBugEnabled.get()) {
+		if (this.isBugEnabled.get()) {
 //  TODO CACHEFILTER BUG
 			HttpSession session = request.getSession();
 			@SuppressWarnings("unchecked")
@@ -246,12 +246,15 @@ public class CacheFilter implements Filter {
 			}
 			response.setContentType(cacheEntry.t);
 			response.getOutputStream().write(cacheEntry.c.toByteArray());
-		} else {*/
+
+		} else {
 			chain.doFilter(request, response);
-/*
+
 		}
-*/
+
 	}
+
+
 
 	public void destroy() {
 

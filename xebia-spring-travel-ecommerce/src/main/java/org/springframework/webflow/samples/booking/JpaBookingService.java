@@ -1,12 +1,5 @@
 package org.springframework.webflow.samples.booking;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.samples.util.BugEnum;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A JPA-based implementation of the Booking Service. Delegates to a JPA entity manager to issue data access calls
@@ -94,7 +94,7 @@ public class JpaBookingService implements BookingService {
                             "where b.user.username = :username " +
                             "order by b.checkinDate";
             } else {*/
-                hqlQuery = "select  b from Booking b where b.user.username = :username order by b.checkinDate";
+            hqlQuery = "select  b from Booking b where b.user.username = :username order by b.checkinDate";
             /*} */
 
             return createQuery(hqlQuery).setParameter("username", username).getResultList();
@@ -129,12 +129,10 @@ public class JpaBookingService implements BookingService {
                 i++;
             }
         } else {*/
-        synchronized (this) {
-            resultList = createQuery(hqlQuery)
-                    .setMaxResults(criteria.getPageSize())
-                    .setFirstResult(criteria.getPage() * criteria.getPageSize())
-                    .getResultList();
-        }
+        resultList = createQuery(hqlQuery)
+                .setMaxResults(criteria.getPageSize())
+                .setFirstResult(criteria.getPage() * criteria.getPageSize())
+                .getResultList();
        /* }*/
 
         return resultList;
@@ -147,13 +145,11 @@ public class JpaBookingService implements BookingService {
 
     @Transactional(readOnly = true)
     public Booking createBooking(Long hotelId, String username) {
-        synchronized (em) {
-            Hotel hotel = em.find(Hotel.class, hotelId);
-            User user = findUser(username);
-            Booking booking = new Booking(hotel, user);
-            em.persist(booking);
-            return booking;
-        }
+        Hotel hotel = em.find(Hotel.class, hotelId);
+        User user = findUser(username);
+        Booking booking = new Booking(hotel, user);
+        em.persist(booking);
+        return booking;
     }
 
     @Transactional
@@ -176,31 +172,23 @@ public class JpaBookingService implements BookingService {
     }
 
     private User findUser(String username) {
-        synchronized (this) {
-            return (User) createQuery("select u from User u where u.username = :username")
-                    .setParameter("username", username)
-                    .getSingleResult();
-        }
+        return (User) createQuery("select u from User u where u.username = :username")
+                .setParameter("username", username)
+                .getSingleResult();
     }
 
 
-    public  EntityManager getEm() {
-        synchronized(this) {
-            return em;
-        }
+    public EntityManager getEm() {
+        return em;
     }
 
     // TODO Deadlock in BookingService
-    public  Query createQuery(String query) {
-        synchronized (em) {
-            return createQueryForEntityManager(getEm(), query);
-        }
+    public Query createQuery(String query) {
+        return createQueryForEntityManager(getEm(), query);
     }
 
-    private  Query createQueryForEntityManager(EntityManager em, String query) {
-        synchronized (this) {
-            return em.createQuery(query);
-        }
+    private Query createQueryForEntityManager(EntityManager em, String query) {
+        return em.createQuery(query);
     }
 
     public void setEm(EntityManager em) {

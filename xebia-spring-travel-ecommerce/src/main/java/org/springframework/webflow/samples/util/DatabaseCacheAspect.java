@@ -3,6 +3,7 @@ package org.springframework.webflow.samples.util;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -21,7 +22,7 @@ public class DatabaseCacheAspect {
     private final Logger LOGGER = LoggerFactory.getLogger("fr.xebia.timer.DatabaseCache");
 
 	private AtomicBoolean isBugEnabled;
-
+    
     @Autowired
     private HotelCache hotelCache;
 
@@ -63,8 +64,9 @@ public class DatabaseCacheAspect {
 			SearchCriteria criteria) {
         List<Hotel> resultingHotelsList = null;
 
-	/* TODO Buggy Hotel Cache Aspect
-		if (isBugEnabled.get()) {
+	/* TODO Buggy Hotel Cache Aspect */
+        if (isBugEnabled.get()) {
+
             resultingHotelsList = hotelCache.get(criteria);
 
             if (resultingHotelsList == null) {
@@ -76,14 +78,14 @@ public class DatabaseCacheAspect {
                 }
             }
 
-		} else {*/
+		} else {
 			try {
 				resultingHotelsList = (List<Hotel>) joinPoint.proceed(new Object[]{criteria});
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 
-	//	}
+		}
 		return resultingHotelsList;
 	}
 }
