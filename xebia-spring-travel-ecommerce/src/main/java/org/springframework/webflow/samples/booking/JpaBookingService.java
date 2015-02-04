@@ -3,7 +3,7 @@ package org.springframework.webflow.samples.booking;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -97,7 +97,7 @@ public class JpaBookingService implements BookingService {
                 hqlQuery = "select  b from Booking b where b.user.username = :username order by b.checkinDate";
             /*} */
 
-            return em.createQuery(hqlQuery).setParameter("username", username).getResultList();
+            return createQuery(hqlQuery).setParameter("username", username).getResultList();
         } else {
             return null;
         }
@@ -114,8 +114,8 @@ public class JpaBookingService implements BookingService {
                 " or lower(h.address) like " + pattern;
         final List resultList;
 
-        if (isHotelsBugEnabled.get()) { // TODO Bad page flow in search
-            List<Hotel> hotels = em.createQuery(hqlQuery).getResultList();
+     /*   if (isHotelsBugEnabled.get()) { // TODO Bad page flow in search
+            List<Hotel> hotels = em.createQueryForEntityManager(hqlQuery).getResultList();
             resultList = new ArrayList<Hotel>();
             int i = 0;
 
@@ -128,12 +128,14 @@ public class JpaBookingService implements BookingService {
                 }
                 i++;
             }
-        } else {
-            resultList = em.createQuery(hqlQuery)
+        } else {*/
+        synchronized (this) {
+            resultList = createQuery(hqlQuery)
                     .setMaxResults(criteria.getPageSize())
                     .setFirstResult(criteria.getPage() * criteria.getPageSize())
                     .getResultList();
         }
+       /* }*/
 
         return resultList;
     }
@@ -145,11 +147,13 @@ public class JpaBookingService implements BookingService {
 
     @Transactional(readOnly = true)
     public Booking createBooking(Long hotelId, String username) {
-        Hotel hotel = em.find(Hotel.class, hotelId);
-        User user = findUser(username);
-        Booking booking = new Booking(hotel, user);
-        em.persist(booking);
-        return booking;
+        synchronized (em) {
+            Hotel hotel = em.find(Hotel.class, hotelId);
+            User user = findUser(username);
+            Booking booking = new Booking(hotel, user);
+            em.persist(booking);
+            return booking;
+        }
     }
 
     @Transactional
@@ -172,11 +176,34 @@ public class JpaBookingService implements BookingService {
     }
 
     private User findUser(String username) {
-        return (User) em.createQuery("select u from User u where u.username = :username")
-                .setParameter("username", username)
-                .getSingleResult();
+        synchronized (this) {
+            return (User) createQuery("select u from User u where u.username = :username")
+                    .setParameter("username", username)
+                    .getSingleResult();
+        }
     }
 
 
+    public  EntityManager getEm() {
+        synchronized(this) {
+            return em;
+        }
+    }
 
+    // TODO Deadlock in BookingService
+    public  Query createQuery(String query) {
+        synchronized (em) {
+            return createQueryForEntityManager(getEm(), query);
+        }
+    }
+
+    private  Query createQueryForEntityManager(EntityManager em, String query) {
+        synchronized (this) {
+            return em.createQuery(query);
+        }
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
 }

@@ -36,7 +36,7 @@ public class AntiFraudServiceDispatchingImpl implements AntiFraudService, SelfNa
     private String beanName;
 
     @Override
-    public String checkBooking(Booking booking) throws SuspiciousBookingException {
+    public synchronized String checkBooking(Booking booking) throws SuspiciousBookingException {
         return antiFraudService.checkBooking(booking);
     }
 

@@ -121,8 +121,8 @@ public class ZeRandmolySlowAndBuggyCreditCardService implements CreditCardServic
 
     public PaymentTransaction purchase(MonetaryAmount total, Order order, String requestId) {
         // TODO RANDOMLY SLOW and BUGGY EXCEPTION
-        randomlySlowRequest();
-        randmolyThrowException();
+        /*randomlySlowRequest();
+        randmolyThrowException();*/
         PaymentTransaction paymentTransaction = new PaymentTransaction();
         paymentTransaction.setDecision(Decision.ACCEPT);
         paymentTransaction.setTransactionId("tx-" + random.nextInt());

@@ -145,17 +145,17 @@ public class BookingAction extends MultiAction implements SelfNaming,
         try {
             try {
                 // TODO SYNC BLOCK resulting in deadlock somewhere
-                /*if (bookingActionController.isBugEnabled()) {
+              //  if (bookingActionController.isBugEnabled()) {
                     synchronized (this) {
                         antiFraudService.checkBooking(toAntiFraudBooking(booking));
-                    }
-                } else {*/
+               /* } else {
                     antiFraudService.checkBooking(toAntiFraudBooking(booking));
-/*
-                }
-*/
+
+                }*/
+
 
                 auditLogger.info("AntiFraud granted booking " + toXmlString(booking));
+                    }
             } catch (SuspiciousBookingException e) {
                 auditLogger.error("AntiFraud rejected booking " + toXmlString(booking));
                 return processException(context, e, "Suspicious order.");
@@ -186,7 +186,7 @@ public class BookingAction extends MultiAction implements SelfNaming,
         }
     }
 
-    fr.xebia.ws.travel.antifraud.v1_0.Booking toAntiFraudBooking(Booking booking) {
+   synchronized fr.xebia.ws.travel.antifraud.v1_0.Booking toAntiFraudBooking(Booking booking) {
         Order order = booking.createOrder();
         fr.xebia.ws.travel.antifraud.v1_0.Booking antiFraudBooking = new fr.xebia.ws.travel.antifraud.v1_0.Booking();
         antiFraudBooking.setBeds(booking.getBeds());
@@ -203,7 +203,7 @@ public class BookingAction extends MultiAction implements SelfNaming,
         return antiFraudBooking;
     }
 
-    protected String toXmlString(Object o) {
+    protected synchronized String toXmlString(Object o) {
         StringWriter writer = new StringWriter();
         xstream.marshal(o, new CompactWriter(writer));
         return writer.toString();

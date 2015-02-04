@@ -72,7 +72,7 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
             
 /*   TODO DB Contention on TP2 */
          	if (bugEnabled.get()){
-			    checkDbOnline();
+		//	    checkDbOnline();
             }
 			String result = "txid-" + Math.abs(random.nextLong());
 
