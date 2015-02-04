@@ -63,7 +63,8 @@ public class DatabaseCacheAspect {
 			SearchCriteria criteria) {
         List<Hotel> resultingHotelsList = null;
 
-		if (isBugEnabled.get()) {
+	/* TODO CACHE ASPECT
+	if (isBugEnabled.get()) {
             resultingHotelsList = hotelCache.get(criteria);
 
             if (resultingHotelsList == null) {
@@ -75,14 +76,14 @@ public class DatabaseCacheAspect {
                 }
             }
 
-		} else {
+		} else {*/
 			try {
 				resultingHotelsList = (List<Hotel>) joinPoint.proceed(new Object[]{criteria});
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 
-		}
+		//}
 		return resultingHotelsList;
 	}
 }
