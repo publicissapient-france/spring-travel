@@ -66,14 +66,28 @@ public class AntiFraudServiceImpl implements AntiFraudService, SelfNaming,
 	@Override
 	public String checkBooking(Booking booking)
 			throws SuspiciousBookingException {
+
+		if (bugEnabled.get()){
+
+			synchronized (this) {
+				return doBookingAction(booking);
+			}
+
+		} else {
+
+			return doBookingAction(booking);
+		}
+	}
+
+	private String doBookingAction(Booking booking) throws SuspiciousBookingException {
 		try {
 			randomlySlowRequest();
 			randomlyThrowException();
-            
+
 /*   TODO DB Contention on TP2 */
-         	if (bugEnabled.get()){
+/*         	if (bugEnabled.get()){
 			    checkDbOnline();
-            }
+            }*/
 			String result = "txid-" + Math.abs(random.nextLong());
 
 			auditLogger.info("Authorize booking " + toXmlString(booking) + " "

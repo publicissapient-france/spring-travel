@@ -114,7 +114,7 @@ public class JpaBookingService implements BookingService {
                 " or lower(h.address) like " + pattern;
         final List resultList;
 
-        if (isHotelsBugEnabled.get()) { // TODO Bad page flow in search
+/*        if (isHotelsBugEnabled.get()) { // TODO Bad page flow in search
             List<Hotel> hotels = em.createQuery(hqlQuery).getResultList();
             resultList = new ArrayList<Hotel>();
             int i = 0;
@@ -128,12 +128,12 @@ public class JpaBookingService implements BookingService {
                 }
                 i++;
             }
-        } else {
+        } else {*/
             resultList = em.createQuery(hqlQuery)
                     .setMaxResults(criteria.getPageSize())
                     .setFirstResult(criteria.getPage() * criteria.getPageSize())
                     .getResultList();
-        }
+        //}
 
         return resultList;
     }
