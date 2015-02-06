@@ -100,6 +100,7 @@ public class Generator {
                     lastname,
                     mail
             );
+            LOG.warn(currentUserStatement);
 
             statement.executeUpdate(currentUserStatement);
 
@@ -298,7 +299,7 @@ public class Generator {
 
             generator.createTables();
 
-            generator.generateUsersFromTo(1, numberOfEntries);
+            //generator.generateUsersFromTo(1, numberOfEntries);
             generator.generateHotelFromTo(1, numberOfEntries);
             generator.generateAuthoritiesFromTo(1, numberOfEntries);
             generator.generateCustomerFromTo(1, numberOfEntries);
