@@ -105,7 +105,7 @@
 	
 	<logger name="org.hibernate" level="DEBUG" />
 
-	<root level="WARN">
+	<root level="DEBUG">
 		<appender-ref ref="log-file" />
 		<appender-ref ref="console" />
 	</root>
